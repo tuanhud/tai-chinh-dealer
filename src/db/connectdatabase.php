@@ -196,6 +196,7 @@ class ConnectDB {
         $this->value='';
         $this->value = array_map('mysql_real_escape_string', array_values($inserts));
         $this->key = array_keys($inserts);
+		echo("INSERT INTO ".$table." (`".implode("`,`", $this->key)."`) VALUES ('".implode("','", $this->value)."');");
         return mysql_query("INSERT INTO ".$table." (`".implode("`,`", $this->key)."`) VALUES ('".implode("','", $this->value)."');");
 	}  
 

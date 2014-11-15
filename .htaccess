@@ -11,6 +11,7 @@ RewriteEngine on
 RewriteBase /
 Options +FollowSymLinks
 RewriteRule ^dang-ky-dai-ly.html$ /registryDaily.php [L]
+RewriteRule ^profile/ca-nhan.html /managerOfDaiLy.php?p=info-account [L]
 RewriteRule ^quanly/cap-nhat-ho-so/(.*)/(.*).html$ /managerOfDaiLy.php?p=profile-update&id=$1 [L]
 RewriteRule ^quanly/chi-tiet-ho-so/(.*)/(.*).html$ /managerOfDaiLy.php?p=profile-detail&id=$1 [L]
 RewriteRule ^quanly/profile_search/key_(.*)/status_(.*)/start_(.*)/end_(.*)/(.*).html$ /managerOfDaiLy.php?c=project-detail&key=$1&sta=$2&start=$3&end=$4&page=$5 [L]

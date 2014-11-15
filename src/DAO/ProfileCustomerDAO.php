@@ -609,7 +609,7 @@ class ProfileCustomerDAO {
 			$sql .= " FROM ".CommonVals::$tbl_type_loan." AS T INNER JOIN ".CommonVals::$tbl_profile_customer." AS P ON P.".CommonVals::$LoanID."=T.".CommonVals::$LoanID." LEFT JOIN ".CommonVals::$tbl_status_proccess_profile." AS S ON S.".CommonVals::$StatusID."=P.".CommonVals::$StatusID." ";
 			
 			$sql .= " WHERE P.".CommonVals::$EmailDealer."='".$email."' AND P.".CommonVals::$IDPro."='".$idPro."'";
-			$sql .= " ORDER BY P.".CommonVals::$IsBackup;
+			$sql .= " ORDER BY P.".CommonVals::$datecreate." DESC, P.".CommonVals::$IsBackup;
 			
 			$profiles = $con -> getvalueString($sql);
 	
@@ -672,6 +672,128 @@ class ProfileCustomerDAO {
 			//echo 'Caught exception: ',  $e->getMessage(), "\n";
 			return $result;
 		}
+	}
+	
+	/**
+	get profiles by idpro
+	*/
+	function getProfileByIDProOnly($idPro, $dateCreate) {
+		$aProfile = new ProfileCustomer();
+		
+		try {
+			$con = new ConnectDB();
+	
+			$sql = "SELECT ";
+			$sql .= "P.".CommonVals::$IDPro.", ";
+			$sql .= "P.".CommonVals::$IDCODE.", ";
+			$sql .= "P.".CommonVals::$StatusID.", ";
+			$sql .= "S.".CommonVals::$StatusName.", ";
+			$sql .= "P.".CommonVals::$LoanID.", ";
+			$sql .= "T.".CommonVals::$LoanName.", ";
+			$sql .= "P.".CommonVals::$EmailDealer.", ";
+			$sql .= "P.".CommonVals::$UserManager.", ";
+			$sql .= "P.".CommonVals::$NameCustomer.", ";
+			$sql .= "P.".CommonVals::$PhoneNumber.", ";
+			$sql .= "P.".CommonVals::$Province.", ";
+			$sql .= "P.".CommonVals::$InfoPro.", ";
+			$sql .= "P.".CommonVals::$InfoRequest.", ";
+			$sql .= "P.".CommonVals::$AmountLoan.", ";
+			$sql .= "P.".CommonVals::$BankLoan.", ";
+			$sql .= "P.".CommonVals::$HoaHong.", ";
+			$sql .= "P.".CommonVals::$Isgnore.", ";
+			$sql .= "P.".CommonVals::$datecreate.", ";
+			$sql .= "P.".CommonVals::$dateupdate.", ";
+			$sql .= "P.".CommonVals::$IsBackup.", ";
+			$sql .= "P.".CommonVals::$UserBackup.", ";
+			$sql .= "P.".CommonVals::$IsDelete.", ";
+			$sql .= "P.".CommonVals::$DateDelete.", ";
+			$sql .= "P.".CommonVals::$UserDelete." ";
+			$sql .= " FROM ".CommonVals::$tbl_type_loan." AS T INNER JOIN ".CommonVals::$tbl_profile_customer." AS P ON P.".CommonVals::$LoanID."=T.".CommonVals::$LoanID." LEFT JOIN ".CommonVals::$tbl_status_proccess_profile." AS S ON S.".CommonVals::$StatusID."=P.".CommonVals::$StatusID." ";
+			
+			$sql .= " WHERE P.".CommonVals::$datecreate."='".$dateCreate."' AND P.".CommonVals::$IDPro."='".$idPro."' ";
+			
+			$profiles = $con -> getvalueString($sql);
+	
+			if(sizeof($profiles) != 0) {
+				foreach ($profiles as $row) {
+					$aProfile -> setIDProfile($row[0]);
+					$aProfile -> setIDCODE($row[1]);
+					
+					$status = new Status();
+					$status -> setStatusID($row[2]);
+					$status -> setStatusName($row[3]);
+					$aProfile -> setStatus($status);
+					
+					$typeLoan = new TypeLoan();
+					$typeLoan -> setLoanID($row[4]);
+					$typeLoan -> setLoanName($row[5]);
+					$aProfile -> setTypeLoan($typeLoan);
+					
+					$aProfile -> setEmailDealer($row[6]);
+					$aProfile -> setUserManager($row[7]);
+					$aProfile -> setNameCustomer($row[8]);
+					$aProfile -> setPhoneNumber($row[9]);
+					$aProfile -> setProvince($row[10]);
+					$aProfile -> setInfoProfile($row[11]);
+					$aProfile -> setInfoRequest($row[12]);
+					$aProfile -> setAmountLoan($row[13]);
+					$aProfile -> setBankLoan($row[14]);
+					$aProfile -> setHoaHong($row[15]);
+					
+					$isgnore = false;
+					if ($row[16] == "1") {
+						$isgnore = true;
+					}
+					$aProfile -> setIsgnore($isgnore);
+					$aProfile -> setDateCreate($row[17]);
+					$aProfile -> setDateUpdate($row[18]);
+					
+					$isBackup = false;
+					if ($row[19] == "1") {
+						$isBackup = true;
+					}
+					$aProfile -> setIsBackup($isBackup);
+					$aProfile -> setUserBackup($row[20]);
+					
+					$isDelete = false;
+					if ($row[21] == "1") {
+						$isDelete = true;
+					}
+					$aProfile -> setIsDelete($isDelete);
+					$aProfile -> setDateDelete($row[22]);
+					$aProfile -> setUserDelete($row[23]);
+				}
+			}
+	
+			return $aProfile;
+		} catch (Exception $e) {
+			//echo 'Caught exception: ',  $e->getMessage(), "\n";
+			return $aProfile;
+		}
+	}
+	
+	function loadSumSalaryMonth($userdealer, $monthDate) {
+		$con = new ConnectDB();
+	
+		$sql = "SELECT sum(".CommonVals::$HoaHong.") AS SUMSALARY FROM ".CommonVals::$tbl_profile_customer." WHERE ".CommonVals::$IsBackup."=0 AND ".CommonVals::$EmailDealer."='".$userdealer."' AND ".CommonVals::$datecreate.">=".$monthDate;
+		return $con -> getvalueString($sql);
+	}
+	
+	function calculatorSalaryDealer($user, $datestart, $dateend) {
+		$con = new ConnectDB();
+		
+		$sql = "SELECT sum(".CommonVals::$HoaHong.") AS SUMSALARY FROM ".CommonVals::$tbl_profile_customer." WHERE ".CommonVals::$IsBackup."=0 AND ".CommonVals::$EmailDealer."='".$user."' ";
+		if($datestart != "") {
+			$datestart = strtotime($datestart." 00:00");
+			$sql .= " AND ".CommonVals::$datecreate.">=".$datestart." ";
+		}
+		
+		if($dateend != "") {
+			$dateend = strtotime($dateend." 23:59");
+			$sql .= " AND ".CommonVals::$datecreate."<=".$dateend." ";
+		}
+		
+		return $con -> getvalueString($sql);
 	}
 }
 ?>

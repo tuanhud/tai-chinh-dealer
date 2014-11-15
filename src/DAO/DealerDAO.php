@@ -345,6 +345,20 @@ class DealerDAO {
 		return $con -> insert($tbl, $fn);
 	}
 	
+	function updateDealer($aDealer) {
+		$con = new ConnectDB();
+	
+		$gender = 0;
+		if ($aDealer->getGender() == true){
+			$gender = 1;
+		}
+		
+		$tbl = CommonVals::$tbl_dealer_bank;
+		$fn = array(CommonVals::$NameDealer => $aDealer->getFullname(), CommonVals::$Gender => $gender, CommonVals::$DayOfBirth => $aDealer->getDayOfBirth(), CommonVals::$Mobile => $aDealer->getMobile(), CommonVals::$HomePhone => $aDealer->getHomePhone(), CommonVals::$Address => $aDealer->getAddress(), CommonVals::$Province => $aDealer->getProvince(), CommonVals::$CompanyWork => $aDealer->getCompanyWork(), CommonVals::$AddressWork => $aDealer->getAddressWork(), CommonVals::$IntroInfoWork => $aDealer->getInfoIntroWork(), CommonVals::$IntroInfoKill => $aDealer->getKinhNghiem(), CommonVals::$CardNumber => $aDealer->getCardNumber(), CommonVals::$BankID => $aDealer->getBank()->getBankID());
+		$conf = array(CommonVals::$EmailDealer => $aDealer->getEmailDealer());
+		return $con -> update($tbl, $fn, $conf);
+	}
+	
 	/**
 	get infomation Dealer display add dealer for account
 	*/
@@ -425,9 +439,7 @@ class DealerDAO {
 		$fn = array(CommonVals::$IsLock => '0');
 		$condition = array(CommonVals::$EmailDealer => $email);
 		return $con -> update($tbl, $fn, $condition);
-	}
-	
-	
+	}	
 	
 	function getInfoCodeByDealer($email) {		
 		$con = new ConnectDB();
@@ -443,6 +455,15 @@ class DealerDAO {
 		}
 
 		return $result;
+	}
+	
+	function updatePasswordDealer($dealer) {
+		$con = new ConnectDB();
+		
+		$tbl = CommonVals::$tbl_dealer_bank;
+		$fn = array(CommonVals::$PassDealer => $dealer->getPassword());
+		$condition = array(CommonVals::$EmailDealer => $dealer->getEmailDealer());
+		return $con -> update($tbl, $fn, $condition);
 	}
 }
 

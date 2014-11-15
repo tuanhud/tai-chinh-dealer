@@ -1,4 +1,21 @@
 <?php
+if (isset($_SESSION['mess'])) {
+	if ($_SESSION['mess'] == "success") {
+?>
+<script>
+alert("Cập nhật thông tin khách hàng thành công");
+</script>
+<?php
+	} else {
+?>
+<script>
+alert("Cập nhật thông tin khách hàng thất bại");
+</script>
+<?php	
+	}
+	unset($_SESSION['mess']);
+}
+
 $profileCustomerDAO = new ProfileCustomerDAO();
 
 if(isset($_GET['id'])) {
@@ -10,42 +27,44 @@ if(isset($_GET['id'])) {
 <div style="margin:auto; width:980px; text-align: center;"><h1 style="color:#88A943; text-transform:uppercase; margin:auto;">CẬP NHẬT HỒ SƠ KHÁCH HÀNG: <A href="/quanly/chi-tiet-ho-so/<?php echo($arrprodetail[0]->getIDProfile()) ?>/<?php echo($nameCustomer) ?>.html"><?php echo($arrprodetail[0]->getNameCustomer()) ?></A></h1></div>
 <div style="height: 20px;"></div>
 <div style="width: 500px; margin: auto;">
-	<table>
-        <tr>
-            <td class="info-basic-bold" width="300px">Tên khách hàng</td>
-            <td>
-            	<input type="hidden" name="act" value="edit" />
-            	<input type="hidden" name="Form_id" value="<?php echo($id) ?>" />
-                <input type="hidden" name="Form_id_date" value="<?php echo($arrprodetail[0]->getDateCreate()) ?>" />
-                <strong><?php echo($arrprodetail[0]->getNameCustomer()) ?></strong></td>
-        </tr>
-        <tr>
-            <td class="info-basic-bold" valign="top">Khu vực</td>
-            <td><?php echo($arrprodetail[0]->getProvince()) ?></td>
-        </tr>
-        <tr>
-            <td class="info-basic-bold" valign="top">Sản phẩm</td>
-            <td><?php echo($arrprodetail[0]->getTypeLoan()->getLoanName()) ?></td>
-        </tr>
-        <tr>
-            <td class="info-basic-bold" valign="top">Số điện thoại</td>
-            <td><?php echo($arrprodetail[0]->getPhoneNumber()) ?></td>
-        </tr>
-        <tr>
-            <td class="info-basic-bold" valign="top">Thông tin bổ sung</td>
-            <td></td>
-        </tr>
-        <tr>
-            <td colspan="2"><textarea name="form_infointro" id="form_infointro" class="form_infointro" style="resize:none; width: 500px;" rows="4"></textarea><br><span id="errinfocus" class="showms"></td>
-        </tr>
-        <tr>
-            <td class="info-basic-bold" valign="top">Upload hồ sơ khách hàng trực tuyến</td>
-            <td><input type="file" name="filenameprofile[]" id="filenameprofile" multiple="multiple" /><br><span style="font-size:10px; color: #06F;">Cập nhật cho phép tối đa 5 file, dung lượng mỗi file tối đa là 2MB và phải là file *.rar , *.zip, *.jpg, *.png, *.doc, *.xls</span><br /><span id="errfileprofile" class="showms"></td>
-        </tr>
-        <tr>
-            <td colspan="2" align="center"><input type="submit" value="Login" class="submitform class-pageNow btn-menu-action" style="width: 100px; line-height: 20px;"  /></td>
-        </tr>
-    </table>
+	<form id="updateprofilecustomerdealer" action="/control/CreateProfileDealer.php" method="post" enctype="multipart/form-data">
+        <table>
+            <tr>
+                <td class="info-basic-bold" width="300px">Tên khách hàng</td>
+                <td>
+                    <input type="hidden" name="act" value="edit" />
+                    <input type="hidden" name="Form_id" value="<?php echo($id) ?>" />
+                    <input type="hidden" name="Form_id_date" value="<?php echo($arrprodetail[0]->getDateCreate()) ?>" />
+                    <strong><?php echo($arrprodetail[0]->getNameCustomer()) ?></strong></td>
+            </tr>
+            <tr>
+                <td class="info-basic-bold" valign="top">Khu vực</td>
+                <td><?php echo($arrprodetail[0]->getProvince()) ?></td>
+            </tr>
+            <tr>
+                <td class="info-basic-bold" valign="top">Sản phẩm</td>
+                <td><?php echo($arrprodetail[0]->getTypeLoan()->getLoanName()) ?></td>
+            </tr>
+            <tr>
+                <td class="info-basic-bold" valign="top">Số điện thoại</td>
+                <td><?php echo($arrprodetail[0]->getPhoneNumber()) ?></td>
+            </tr>
+            <tr>
+                <td class="info-basic-bold" valign="top">Thông tin bổ sung</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td colspan="2"><textarea name="form_infointro" id="form_infointro" class="form_infointro" style="resize:none; width: 500px;" rows="4"></textarea><br><span id="errinfocus" class="showms"></td>
+            </tr>
+            <tr>
+                <td class="info-basic-bold" valign="top">Upload hồ sơ khách hàng trực tuyến</td>
+                <td><input type="file" name="filenameprofile[]" id="filenameprofile" multiple="multiple" /><br><span style="font-size:10px; color: #06F;">Cập nhật cho phép tối đa 5 file, dung lượng mỗi file tối đa là 2MB và phải là file *.rar , *.zip, *.jpg, *.png, *.doc, *.xls</span><br /><span id="errfileprofile" class="showms"></td>
+            </tr>
+            <tr>
+                <td colspan="2" align="center"><input type="submit" value="Login" class="submitform class-pageNow btn-menu-action" style="width: 100px; line-height: 20px;"  /></td>
+            </tr>
+        </table>
+    </form>
 </div>
 
 <div style="clear: both; height: 20px;"></div>
@@ -122,6 +141,52 @@ if (count($arrprodetail) > 0) {
 <script>
 $(document).ready(function(e) {
 	CKEDITOR.replace('form_infointro');
+	$('#filenameprofile').change(function(){ 
+		elem = this;
+		if(elem.files.length > 5) {
+			alert("Số file tối đa là 5 file");
+			$('#errfileprofile').html('Bạn chỉ có thể chọn số file tối đa là 5 file');
+			$('#filenameprofile').val('');
+			return false;
+		}
+		for (var x = 0; x < elem.files.length; x++) {
+			var f=elem.files[x];
+			
+			var ext = "";
+			sGetPath = f.name;
+			ext = sGetPath.substring(sGetPath.length-3, sGetPath.length);
+			ext = ext.toLowerCase();
+			if((ext != 'rar') && (ext != 'zip') && (ext != 'doc') && (ext != 'xls') && (ext != 'jpg') && (ext != 'png')) {
+				alert("Bạn chỉ có thể chọn file có đuôi là: *.rar , *.zip, *.jpg, *.png, *.doc, *.xls");
+				$('#errfileprofile').html('Bạn chỉ có thể chọn file có đuôi là: *.rar , *.zip, *jpg, *png, word, excel');
+				$('#filenameprofile').val('');
+				return false;
+			}else{
+				if(f.size > 2097152) { //2MB
+					alert("File có kích thước lớn hơn 2MB, vui lòng chọn file khác");
+					$('#errfileprofile').html('File có kích thước lớn hơn 2MB, vui lòng chọn file khác');
+					$('#filenameprofile').val('');
+					return false;
+				} else {
+					$('#errfileprofile').html('');
+				}
+			}
+		}
+		return true;
+	});
+	
+	$('#updateprofilecustomerdealer').submit(function(e) {
+		var infointro = CKEDITOR.instances['form_infointro'].getData();
+		
+		if(infointro.length == 0) {
+			$('#errinfocus').html('Vui lòng điền một số thông tin cơ bản về khách hàng');
+			return false;
+		} else {
+			$('#errinfocus').html('');
+		}
+		
+		return true;
+    });
 });
 </script>
 <?php
