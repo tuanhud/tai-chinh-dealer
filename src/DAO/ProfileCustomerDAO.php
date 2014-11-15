@@ -40,88 +40,49 @@ class ProfileCustomerDAO {
 			$sql .= "P.".CommonVals::$UserBackup.", ";
 			$sql .= "P.".CommonVals::$IsDelete.", ";
 			$sql .= "P.".CommonVals::$DateDelete.", ";
-			$sql .= "P.".CommonVals::$UserDelete." ";
+			$sql .= "P.".CommonVals::$UserDelete.", ";
+			$sql .= "P.".CommonVals::$DateCreateFirst." ";
 			$sql .= " FROM ".CommonVals::$tbl_type_loan." AS T INNER JOIN ".CommonVals::$tbl_profile_customer." AS P ON P.".CommonVals::$LoanID."=T.".CommonVals::$LoanID." LEFT JOIN ".CommonVals::$tbl_status_proccess_profile." AS S ON S.".CommonVals::$StatusID."=P.".CommonVals::$StatusID." ";
 			
-			$isWhere = false;
+			$sql .= " WHERE P.".CommonVals::$IsBackup."=0 ";
+			
 			if (!$isRoot) {
-				$sql .= " WHERE ";
-				$sql .= " P.".CommonVals::$UserManager."='".$UserManager."' ";
+				$sql .= " AND P.".CommonVals::$UserManager."='".$UserManager."' ";
 				$isWhere = true;
 			}
 			
 			if ($codeID != "")
 			{
-				if ($isWhere) {
-					$sql .= " AND ";
-				} else {
-					$sql .= " WHERE ";
-					$isWhere = true;
-				}
-				$sql .= " P.".CommonVals::$IDCODE."='".$codeID."' ";
+				$sql .= " AND P.".CommonVals::$IDCODE."='".$codeID."' ";
 			}
 			
 			if ($namesr != "")
 			{
-				if ($isWhere) {
-					$sql .= " AND ";
-				} else {
-					$sql .= " WHERE ";
-					$isWhere = true;
-				}
-				$sql .= " P.".CommonVals::$NameCustomer." LIKE '%".$namesr."%' ";
+				$sql .= " AND P.".CommonVals::$NameCustomer." LIKE '%".$namesr."%' ";
 			}
 			
 			if ($statussr != "")
 			{
-				if ($isWhere) {
-					$sql .= " AND ";
-				} else {
-					$sql .= " WHERE ";
-					$isWhere = true;
-				}
-				$sql .= " P.".CommonVals::$StatusID."='".$statussr."' ";
+				$sql .= " AND P.".CommonVals::$StatusID."='".$statussr."' ";
 			}
 			
 			if ($city != "")
 			{
-				if ($isWhere) {
-					$sql .= " AND ";
-				} else {
-					$sql .= " WHERE ";
-					$isWhere = true;
-				}
-				$sql .= " P.".CommonVals::$Province." LIKE '%".$city."%' ";
+				$sql .= " AND P.".CommonVals::$Province." LIKE '%".$city."%' ";
 			}
 			
 			if ($typeloan != "")
 			{
-				if ($isWhere) {
-					$sql .= " AND ";
-				} else {
-					$sql .= " WHERE ";
-					$isWhere = true;
-				}
-				$sql .= " P.".CommonVals::$LoanID."='".$typeloan."' ";
+				$sql .= " AND P.".CommonVals::$LoanID."='".$typeloan."' ";
 			}
 			
 			if ($tempsql != "")
 			{
-				if (!$isWhere) {
-					$sql .= " WHERE 1=1 ";
-					$isWhere = true;
-				}
 				$sql .= " ".$tempsql;
 			}
 			
 			if (!$isRoot) {
-				if ($isWhere) {
-					$sql .= " AND ";
-				} else {
-					$sql .= " WHERE ";
-					$isWhere = true;
-				}
-				$sql .= " P.".CommonVals::$IsDelete."=0 AND P.".CommonVals::$IsBackup."=0 ";
+				$sql .= " AND P.".CommonVals::$IsDelete."=0 ";
 			}
 			
 			$sql .= " ORDER BY P.".CommonVals::$datecreate." DESC ";
@@ -179,6 +140,7 @@ class ProfileCustomerDAO {
 					$aProfile -> setIsDelete($isDelete);
 					$aProfile -> setDateDelete($row[22]);
 					$aProfile -> setUserDelete($row[23]);
+					$aProfile -> setDateCreateFirst($row[24]);
 					
 					array_push($result, $aProfile);
 				}
@@ -203,85 +165,46 @@ class ProfileCustomerDAO {
 			$sql = "SELECT COUNT(".CommonVals::$IDPro.")";
 			$sql .= " FROM ".CommonVals::$tbl_type_loan." AS T INNER JOIN ".CommonVals::$tbl_profile_customer." AS P ON P.".CommonVals::$LoanID."=T.".CommonVals::$LoanID." LEFT JOIN ".CommonVals::$tbl_status_proccess_profile." AS S ON S.".CommonVals::$StatusID."=P.".CommonVals::$StatusID." ";
 			
+			$sql .= " WHERE P.".CommonVals::$IsBackup."=0 ";
+			
 			$isWhere = false;
 			if (!$isRoot) {
-				$sql .= " WHERE ";
-				$sql .= " P.".CommonVals::$UserManager."='".$UserManager."' ";
+				$sql .= " AND P.".CommonVals::$UserManager."='".$UserManager."' ";
 				$isWhere = true;
 			}
 			
 			if ($codeID != "")
 			{
-				if ($isWhere) {
-					$sql .= " AND ";
-				} else {
-					$sql .= " WHERE ";
-					$isWhere = true;
-				}
-				$sql .= " P.".CommonVals::$IDCODE."='".$codeID."' ";
+				$sql .= " AND P.".CommonVals::$IDCODE."='".$codeID."' ";
 			}
 			
 			if ($namesr != "")
 			{
-				if ($isWhere) {
-					$sql .= " AND ";
-				} else {
-					$sql .= " WHERE ";
-					$isWhere = true;
-				}
-				$sql .= " P.".CommonVals::$NameCustomer." LIKE '%".$namesr."%' ";
+				$sql .= " AND P.".CommonVals::$NameCustomer." LIKE '%".$namesr."%' ";
 			}
 			
 			if ($statussr != "")
 			{
-				if ($isWhere) {
-					$sql .= " AND ";
-				} else {
-					$sql .= " WHERE ";
-					$isWhere = true;
-				}
-				$sql .= " P.".CommonVals::$StatusID."='".$statussr."' ";
+				$sql .= " AND P.".CommonVals::$StatusID."='".$statussr."' ";
 			}
 			
 			if ($city != "")
 			{
-				if ($isWhere) {
-					$sql .= " AND ";
-				} else {
-					$sql .= " WHERE ";
-					$isWhere = true;
-				}
-				$sql .= " P.".CommonVals::$Province." LIKE '%".$city."%' ";
+				$sql .= " AND P.".CommonVals::$Province." LIKE '%".$city."%' ";
 			}
 			
 			if ($typeloan != "")
 			{
-				if ($isWhere) {
-					$sql .= " AND ";
-				} else {
-					$sql .= " WHERE ";
-					$isWhere = true;
-				}
-				$sql .= " P.".CommonVals::$LoanID."='".$typeloan."' ";
+				$sql .= " AND P.".CommonVals::$LoanID."='".$typeloan."' ";
 			}
 			
 			if ($tempsql != "")
 			{
-				if (!$isWhere) {
-					$sql .= " WHERE 1=1 ";
-					$isWhere = true;
-				}
 				$sql .= " ".$tempsql;
 			}
 			
 			if (!$isRoot) {
-				if ($isWhere) {
-					$sql .= " AND ";
-				} else {
-					$sql .= " WHERE ";
-					$isWhere = true;
-				}
-				$sql .= " P.".CommonVals::$IsDelete."=0 AND P.".CommonVals::$IsBackup."=0 ";
+				$sql .= " AND P.".CommonVals::$IsDelete."=0 ";
 			}
 			
 			$count = $con -> getvalueString($sql);
@@ -406,7 +329,8 @@ class ProfileCustomerDAO {
 			$sql .= "P.".CommonVals::$UserBackup.", ";
 			$sql .= "P.".CommonVals::$IsDelete.", ";
 			$sql .= "P.".CommonVals::$DateDelete.", ";
-			$sql .= "P.".CommonVals::$UserDelete." ";
+			$sql .= "P.".CommonVals::$UserDelete.", ";
+			$sql .= "P.".CommonVals::$DateCreateFirst." ";
 			$sql .= " FROM ".CommonVals::$tbl_type_loan." AS T INNER JOIN ".CommonVals::$tbl_profile_customer." AS P ON P.".CommonVals::$LoanID."=T.".CommonVals::$LoanID." LEFT JOIN ".CommonVals::$tbl_status_proccess_profile." AS S ON S.".CommonVals::$StatusID."=P.".CommonVals::$StatusID." ";
 			
 			$isWhere = false;			
@@ -515,6 +439,7 @@ class ProfileCustomerDAO {
 					$aProfile -> setIsDelete($isDelete);
 					$aProfile -> setDateDelete($row[22]);
 					$aProfile -> setUserDelete($row[23]);
+					$aProfile -> setDateCreateFirst($row[24]);
 					
 					array_push($result, $aProfile);
 				}
@@ -530,7 +455,7 @@ class ProfileCustomerDAO {
 	function insertProfileDealer($profile) {
 		$con = new ConnectDB();
 		$tbl = CommonVals::$tbl_profile_customer;
-		$fn = array(CommonVals::$IDPro => $profile->getIDProfile(), CommonVals::$datecreate => $profile->getDateCreate(), CommonVals::$StatusID => $profile->getStatus()->getStatusID(), CommonVals::$LoanID => $profile->getTypeLoan()->getLoanID(), CommonVals::$IDCODE => $profile->getIDCODE(), CommonVals::$EmailDealer => $profile->getEmailDealer(), CommonVals::$UserManager => $profile->getUserManager(), CommonVals::$NameCustomer => $profile->getNameCustomer(), CommonVals::$PhoneNumber => $profile->getPhoneNumber(), CommonVals::$Province => $profile->getProvince(), CommonVals::$InfoPro => $profile->getInfoProfile(), CommonVals::$InfoRequest => $profile->getInfoRequest(), CommonVals::$BankLoan => $profile->getBankLoan(), CommonVals::$AmountLoan => $profile->getAmountLoan(), CommonVals::$HoaHong => $profile->getHoaHong(), CommonVals::$dateupdate => $profile->getDateUpdate());
+		$fn = array(CommonVals::$IDPro => $profile->getIDProfile(), CommonVals::$datecreate => $profile->getDateCreate(), CommonVals::$StatusID => $profile->getStatus()->getStatusID(), CommonVals::$LoanID => $profile->getTypeLoan()->getLoanID(), CommonVals::$IDCODE => $profile->getIDCODE(), CommonVals::$EmailDealer => $profile->getEmailDealer(), CommonVals::$UserManager => $profile->getUserManager(), CommonVals::$NameCustomer => $profile->getNameCustomer(), CommonVals::$PhoneNumber => $profile->getPhoneNumber(), CommonVals::$Province => $profile->getProvince(), CommonVals::$InfoPro => $profile->getInfoProfile(), CommonVals::$InfoRequest => $profile->getInfoRequest(), CommonVals::$BankLoan => $profile->getBankLoan(), CommonVals::$AmountLoan => $profile->getAmountLoan(), CommonVals::$HoaHong => $profile->getHoaHong(), CommonVals::$dateupdate => $profile->getDateUpdate(), CommonVals::$DateCreateFirst => $profile->getDateCreateFirst());
 		if ($con -> insert($tbl, $fn)) {
 			return true;
 		} else {
@@ -605,10 +530,25 @@ class ProfileCustomerDAO {
 			$sql .= "P.".CommonVals::$UserBackup.", ";
 			$sql .= "P.".CommonVals::$IsDelete.", ";
 			$sql .= "P.".CommonVals::$DateDelete.", ";
-			$sql .= "P.".CommonVals::$UserDelete." ";
+			$sql .= "P.".CommonVals::$UserDelete.", ";
+			$sql .= "P.".CommonVals::$DateCreateFirst." ";
 			$sql .= " FROM ".CommonVals::$tbl_type_loan." AS T INNER JOIN ".CommonVals::$tbl_profile_customer." AS P ON P.".CommonVals::$LoanID."=T.".CommonVals::$LoanID." LEFT JOIN ".CommonVals::$tbl_status_proccess_profile." AS S ON S.".CommonVals::$StatusID."=P.".CommonVals::$StatusID." ";
 			
-			$sql .= " WHERE P.".CommonVals::$EmailDealer."='".$email."' AND P.".CommonVals::$IDPro."='".$idPro."'";
+			//$sql .= " WHERE P.".CommonVals::$EmailDealer."='".$email."' AND P.".CommonVals::$IDPro."='".$idPro."'";
+			
+			$isWhere = false;
+			if ($email != "") {
+				$sql .= " WHERE P.".CommonVals::$EmailDealer."='".$email."' ";
+				$isWhere = true;
+			}
+			
+			if ($isWhere) {
+				$sql .= " AND ";
+			} else {
+				$sql .= " WHERE ";
+			}
+			$sql .= " P.".CommonVals::$IDPro."='".$idPro."' ";
+			
 			$sql .= " ORDER BY P.".CommonVals::$datecreate." DESC, P.".CommonVals::$IsBackup;
 			
 			$profiles = $con -> getvalueString($sql);
@@ -662,6 +602,7 @@ class ProfileCustomerDAO {
 					$aProfile -> setIsDelete($isDelete);
 					$aProfile -> setDateDelete($row[22]);
 					$aProfile -> setUserDelete($row[23]);
+					$aProfile -> setDateCreateFirst($row[24]);
 					
 					array_push($result, $aProfile);
 				}
@@ -707,7 +648,8 @@ class ProfileCustomerDAO {
 			$sql .= "P.".CommonVals::$UserBackup.", ";
 			$sql .= "P.".CommonVals::$IsDelete.", ";
 			$sql .= "P.".CommonVals::$DateDelete.", ";
-			$sql .= "P.".CommonVals::$UserDelete." ";
+			$sql .= "P.".CommonVals::$UserDelete.", ";
+			$sql .= "P.".CommonVals::$DateCreateFirst." ";
 			$sql .= " FROM ".CommonVals::$tbl_type_loan." AS T INNER JOIN ".CommonVals::$tbl_profile_customer." AS P ON P.".CommonVals::$LoanID."=T.".CommonVals::$LoanID." LEFT JOIN ".CommonVals::$tbl_status_proccess_profile." AS S ON S.".CommonVals::$StatusID."=P.".CommonVals::$StatusID." ";
 			
 			$sql .= " WHERE P.".CommonVals::$datecreate."='".$dateCreate."' AND P.".CommonVals::$IDPro."='".$idPro."' ";
@@ -762,6 +704,7 @@ class ProfileCustomerDAO {
 					$aProfile -> setIsDelete($isDelete);
 					$aProfile -> setDateDelete($row[22]);
 					$aProfile -> setUserDelete($row[23]);
+					$aProfile -> setDateCreateFirst($row[24]);
 				}
 			}
 	
@@ -775,7 +718,7 @@ class ProfileCustomerDAO {
 	function loadSumSalaryMonth($userdealer, $monthDate) {
 		$con = new ConnectDB();
 	
-		$sql = "SELECT sum(".CommonVals::$HoaHong.") AS SUMSALARY FROM ".CommonVals::$tbl_profile_customer." WHERE ".CommonVals::$IsBackup."=0 AND ".CommonVals::$EmailDealer."='".$userdealer."' AND ".CommonVals::$datecreate.">=".$monthDate;
+		$sql = "SELECT sum(".CommonVals::$HoaHong.") AS SUMSALARY FROM ".CommonVals::$tbl_profile_customer." WHERE ".CommonVals::$IsBackup."=0 AND ".CommonVals::$EmailDealer."='".$userdealer."' AND ".CommonVals::$DateCreateFirst.">=".$monthDate;
 		return $con -> getvalueString($sql);
 	}
 	
@@ -785,12 +728,12 @@ class ProfileCustomerDAO {
 		$sql = "SELECT sum(".CommonVals::$HoaHong.") AS SUMSALARY FROM ".CommonVals::$tbl_profile_customer." WHERE ".CommonVals::$IsBackup."=0 AND ".CommonVals::$EmailDealer."='".$user."' ";
 		if($datestart != "") {
 			$datestart = strtotime($datestart." 00:00");
-			$sql .= " AND ".CommonVals::$datecreate.">=".$datestart." ";
+			$sql .= " AND ".CommonVals::$DateCreateFirst.">=".$datestart." ";
 		}
 		
 		if($dateend != "") {
 			$dateend = strtotime($dateend." 23:59");
-			$sql .= " AND ".CommonVals::$datecreate."<=".$dateend." ";
+			$sql .= " AND ".CommonVals::$DateCreateFirst."<=".$dateend." ";
 		}
 		
 		return $con -> getvalueString($sql);

@@ -15,6 +15,7 @@ include_once($_SERVER['DOCUMENT_ROOT'].'/src/DAO/StatusDAO.php');
 include_once($_SERVER['DOCUMENT_ROOT'].'/src/DAO/DealerDAO.php');
 include_once($_SERVER['DOCUMENT_ROOT'].'/src/DAO/BankDAO.php');
 include_once($_SERVER['DOCUMENT_ROOT'].'/src/DAO/ProfileCustomerDAO.php');
+include_once($_SERVER['DOCUMENT_ROOT'].'/src/DAO/FileProfileDAO.php');
 
 
 ob_start("ob_gzhandler");

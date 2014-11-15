@@ -74,6 +74,7 @@ class CommonVals
 	public static $IsDelete = 'is_delete';
 	public static $DateDelete = 'date_delete';
 	public static $UserDelete = 'user_delete';
+	public static $DateCreateFirst = 'datecreatefirst';
 	
 	// table type_loan_tbl
 	public static $LoanID = 'loan_id';

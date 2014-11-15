@@ -1,10 +1,13 @@
 <?php
 $profileCustomerDAO = new ProfileCustomerDAO();
+$fileProfileDAO = new FileProfileDAO();
 
 if(isset($_GET['id'])) {
 	$id = $_GET['id'];
 	$arrprodetail = $profileCustomerDAO -> getProfileDetailByIDPro($email, $id);
 	if (count($arrprodetail) > 0) {
+		
+		$fileProfiles = $fileProfileDAO -> getFileProfile($id);
 ?>
 <style>
 .class-content-records {border-bottom: 1px solid #98bf21;}
@@ -47,7 +50,7 @@ if(isset($_GET['id'])) {
         <tr><td colspan="2"  class="class-content-records"></td></tr>
         <tr>
         	<th valign="top" align="left">Ngày đăng</th>
-            <td><?php echo(CommonFuns::int_to_date2($arrprodetail[0]->getDateCreate())) ?></td>
+            <td><?php echo(CommonFuns::int_to_date2($arrprodetail[0]->getDateCreateFirst())) ?></td>
         </tr>
         <tr><td colspan="2"  class="class-content-records"></td></tr>
         <tr>
@@ -74,12 +77,9 @@ if(isset($_GET['id'])) {
             <td>
             	<ol>
             <?php
-			/*if($arrprodetail[0][4] != "") {
-				$pieces = explode(",", $arrprodetail[0][4]);
-				foreach($pieces as $tempfile) {
-					echo('<li><a href="'.$tempfile.'">Hồ sơ '.$tempfile.'</a></li>');
-				}
-			}*/
+			for ($i = 0; $i < count($fileProfiles); $i++) {
+				echo('<li>'.($i + 1).'.&nbsp;&nbsp;<a href="/'.$fileProfiles[$i] -> getLinkFile().'">Hồ sơ '.$fileProfiles[$i] -> getLinkFile().'</a></li>');
+			}
 			?>
             	</ol>
             </td>
@@ -143,15 +143,11 @@ if (count($arrprodetail) > 0) {
         </tr>
         <?php
 		$icount = 1;
-		$dateLogin = "";
 		for ($icount = 1; $icount < count($arrprodetail); $icount++) {
-			if ($icount == 1 && count($arrprodetail) > 1) {
-				$dateLogin = $arrprodetail[count($arrprodetail) - 1]->getDateCreate();
-			}
 		?>
         <tr>
         	<td align="center"><span><?php echo($icount) ?></span></td>
-            <td align="center"><span><?php echo(CommonFuns::int_to_date2($dateLogin)); ?></span></td>
+            <td align="center"><span><?php echo(CommonFuns::int_to_date2($arrprodetail[$icount]->getDateCreateFirst())); ?></span></td>
             <td align="center"><span><?php echo($arrprodetail[$icount]->getStatus()->getStatusName()); ?></span></td>
             <td align="left"><span><?php echo($arrprodetail[$icount]->getInfoProfile()); ?></span></td>
             <td align="left"><span><?php echo($arrprodetail[$icount]->getInfoRequest()); ?></span></td>

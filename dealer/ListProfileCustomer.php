@@ -227,7 +227,7 @@ $(document).ready(function(e) {
             <tr>
             	<td align="center"><span><?php echo($i) ?></span></td>
             	<td><span style="margin-left: 5px; margin-right:5px;"><a href="/quanly/chi-tiet-ho-so/<?php echo($entry->getIDProfile()) ?>/<?php echo($nameCustomer) ?>.html" title="Xem chi tiết hồ sơ của <?php echo($entry->getNameCustomer()) ?>"><?php echo($entry->getNameCustomer()) ?></a></span></td>
-                <td align="center"><span><?php echo(CommonFuns::int_to_date2($entry->getDateCreate())) ?></span></td>
+                <td align="center"><span><?php echo(CommonFuns::int_to_date2($entry->getDateCreateFirst())) ?></span></td>
                 <td align="center"><span><?php echo($entry->getProvince()) ?></span></td>
                 <td align="center"><span><?php echo($entry->getStatus()->getStatusName()) ?></span></td>
                 <td align="center"><span><?php if($entry->getDateUpdate() != "") echo(CommonFuns::int_to_date2($entry->getDateUpdate())); ?></span></td>
