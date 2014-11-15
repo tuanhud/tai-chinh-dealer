@@ -84,15 +84,11 @@ if (count($arrprodetail) > 0) {
         </tr>
         <?php
 		$icount = 0;
-		$dateLogin = "";
 		for ($icount = 0; $icount < count($arrprodetail); $icount++) {
-			if ($icount == 0 && count($arrprodetail) > 1) {
-				$dateLogin = $arrprodetail[count($arrprodetail) - 1]->getDateCreate();
-			}
 		?>
         <tr>
         	<td align="center"><span><?php echo($icount + 1) ?></span></td>
-            <td align="center"><span><?php echo(CommonFuns::int_to_date2($dateLogin)); ?></span></td>
+            <td align="center"><span><?php echo(CommonFuns::int_to_date2($arrprodetail[$icount]->getDateCreateFirst())); ?></span></td>
             <td align="center"><span><?php echo($arrprodetail[$icount]->getStatus()->getStatusName()); ?></span></td>
             <td align="left"><span><?php echo($arrprodetail[$icount]->getInfoProfile()); ?></span></td>
             <td align="left"><span><?php echo($arrprodetail[$icount]->getInfoRequest()); ?></span></td>

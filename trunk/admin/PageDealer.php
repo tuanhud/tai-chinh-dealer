@@ -38,8 +38,8 @@ if (!$aAdminUser->isRoot() && !$authorUser->isEditProfile() && !$authorUser->isD
 			$urlContentP = 'dealer/DetailDealer.php';
 		} else if ($content == 'ho-so-khach-hang') {
 			$urlContentP = 'dealer/ProfileCustomerView.php';
-		} else if ($_GET['p'] == "type-loans") {
-			$urlContentP = 'dealer/TypeLoanList.php';
+		} else if ($_GET['p'] == "chi-tiet-ho-so-khach-hang") {
+			$urlContentP = 'dealer/DetailProfileCustLoan.php';
 		} else if ($_GET['p'] == "add-type-loan") {
 			$urlContentP = 'dealer/AddTypeLoan.php';
 		} else if ($_GET['p'] == "edit-type-loan") {

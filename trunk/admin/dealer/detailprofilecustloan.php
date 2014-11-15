@@ -1,36 +1,23 @@
 <?php
-require_once ("../src/db/connectdatabase.php");
+include_once($_SERVER['DOCUMENT_ROOT'].'/src/entitys/ProfileCustomer.php');
+include_once($_SERVER['DOCUMENT_ROOT'].'/src/entitys/FileProfile.php');
+include_once($_SERVER['DOCUMENT_ROOT'].'/src/entitys/Status.php');
+include_once($_SERVER['DOCUMENT_ROOT'].'/src/DAO/ProfileCustomerDAO.php');
+include_once($_SERVER['DOCUMENT_ROOT'].'/src/DAO/FileProfileDAO.php');
+include_once($_SERVER['DOCUMENT_ROOT'].'/src/DAO/StatusDAO.php');
 
-function getProfileCus($idpro) {
-	$con = new ConnectDB();
-	
-	$sql = "Select p.idpro, p.regis_email, p.namecustomer, p.province, tl.namepurp, p.infopro, p.linkfileattach, p.inforequest, p.statusquo, p.amount1, p.amount2, p.amount3, p.isgnore, p.datecreate, p.dateupdate, p.phonenumber FROM profilecustomer AS p, purposeloan AS tl WHERE p.loantype=tl.idpurpose AND p.idpro=".$idpro;
-	return $con -> getvalueString($sql);
-}
-
-function int_to_date($int)
-{
-    $time  = date("d/m/Y", $int);
-    return $time;
-}
+$profileCustomerDAO = new ProfileCustomerDAO();
+$fileProfileDAO = new FileProfileDAO();
+$statusDAO = new StatusDAO();
 
 if(isset($_GET['rei'])) {
 	$idpro = $_GET['rei'];
-	$arrprofile = getProfileCus($idpro);
-	if(count($arrprofile) > 0) {
+	$arrprodetail = $profileCustomerDAO -> getProfileDetailByIDPro('', $idpro);
+	if(count($arrprodetail) > 0) {
+		$fileProfiles = $fileProfileDAO -> getFileProfile($idpro);
+		$statusList = $statusDAO->getStatuss(0);
 ?>
 <style>
-.reveal-modal-bg { 
-	position: fixed; 
-	height: 100%;
-	width: 100%;
-	background: #000;
-	background: rgba(0,0,0,.8);
-	z-index: 100;
-	display: none;
-	top: 0;
-	left: 0; 
-}
 #showlistbankdeletedlightbox {
 	display: none;
 	top: 0px; 
@@ -80,48 +67,51 @@ if(isset($_GET['rei'])) {
 	overflow-y: scroll;
 }
 </style>
-<h3>Chi Tiết Hồ Sơ Khách Hàng <?php echo($arrprofile[0][2]) ?></h3>
-<div style="width:900px;">
+<div style="width: 100%; text-align: center; margin-bottom: 20px;"><h1>Chi Tiết Hồ Sơ Khách Hàng <?php echo($arrprodetail[0]->getNameCustomer()) ?></h1></div>
+<div style="width:600px; margin: auto;">
 	<table width="600px">
     	<tr>
-        	<th align="left" width="150px">Tên Khách Hàng</th>
-            <td><strong><?php echo($arrprofile[0][2]) ?></strong></td>
+        	<th align="left" width="150px">Tên khách hàng</th>
+            <td><strong><?php echo($arrprodetail[0]->getNameCustomer()) ?></strong></td>
         </tr>
         <tr><td colspan="2"><hr style="border: 1px solid; margin-top:4px; margin-bottom: 4px;"></td></tr>
         <tr>
         	<th align="left" width="150px">Số điện thoại</th>
-            <td><strong><?php echo($arrprofile[0][15]) ?></strong></td>
+            <td><strong><?php echo($arrprodetail[0]->getPhoneNumber()) ?></strong></td>
         </tr>
         <tr><td colspan="2"><hr style="border: 1px solid; margin-top:4px; margin-bottom: 4px;"></td></tr>
         <tr>
-        	<th align="left">Tỉnh Thành</th>
-            <td><?php echo($arrprofile[0][3]) ?></td>
+        	<th align="left">Khu vực</th>
+            <td><?php echo($arrprodetail[0]->getProvince()) ?></td>
         </tr>
         <tr><td colspan="2"><hr style="border: 1px solid; margin-top:4px; margin-bottom: 4px;"></td></tr>
         <tr>
-        	<th align="left">Loại Vay</th>
-            <td><?php echo($arrprofile[0][4]) ?></td>
+        	<th align="left">Sản phẩm</th>
+            <td><?php echo($arrprodetail[0]->getTypeLoan()->getLoanName()) ?></td>
         </tr>
         <tr><td colspan="2"><hr style="border: 1px solid; margin-top:4px; margin-bottom: 4px;"></td></tr>
         <tr>
-        	<th align="left" valign="top">TT Tóm Tắt</th>
-            <td><?php echo($arrprofile[0][5]) ?></td>
+        	<th align="left" valign="top">Thông tin chi tiết</th>
+            <td>
+				<?php echo($arrprodetail[0]->getInfoProfile()."<br/>"); ?>
+                <?php
+				for ($i = 1; $i < count($arrprodetail); $i++) {
+					echo("**************************************<br/>");
+					echo("Ngày đăng: ".CommonFuns::int_to_date2($arrprodetail[$i]->getDateCreate())." <br/>");
+					echo($arrprodetail[$i]->getInfoProfile()."<br/>");
+				}
+				?>
+            </td>
         </tr>
         <tr><td colspan="2"><hr style="border: 1px solid; margin-top:4px; margin-bottom: 4px;"></td></tr>
         <tr>
         	<th align="left" valign="top">File Đính Kèm</th>
             <td>
                 <ol>
-                <?php
-				if($arrprofile[0][6] != "") {
-					echo('<strong>Download file đính kèm</strong><br />');
-					$pieces = explode(",", $arrprofile[0][6]);
-					foreach($pieces as $tempfile) {
-						echo('<li><a href="../'.$tempfile.'">Tập Tin '.$tempfile.'</a></li>');
-					}
-				} else {
-					echo('<strong>Không có file đính kèm</strong><br />');
-				}
+				<?php
+                for ($i = 0; $i < count($fileProfiles); $i++) {
+                    echo('<li>'.($i + 1).'.&nbsp;&nbsp;<a href="/'.$fileProfiles[$i] -> getLinkFile().'">Hồ sơ '.$fileProfiles[$i] -> getLinkFile().'</a></li>');
+                }
                 ?>
             	</ol>
             </td>
@@ -129,40 +119,115 @@ if(isset($_GET['rei'])) {
         <tr><td colspan="2"><hr style="border: 1px solid; margin-top:4px; margin-bottom: 4px;"></td></tr>
         <tr>
         	<th align="left">Trạng Thái</th>
-            <td><?php echo($arrprofile[0][8]) ?></td>
+            <td><?php echo($arrprodetail[0]->getStatus()->getStatusName()) ?></td>
         </tr>
         <tr><td colspan="2"><hr style="border: 1px solid; margin-top:4px; margin-bottom: 4px;"></td></tr>
         <tr>
         	<th align="left" valign="top">TT Phản Hồi</th>
-            <td><?php echo($arrprofile[0][7]) ?></td>
+            <td>
+				<?php echo($arrprodetail[0]->getInfoRequest()."<br/>") ?>
+                <?php
+				for ($i = 1; $i < count($arrprodetail); $i++) {
+					if (trim($arrprodetail[$i]->getInfoRequest()) != "") {
+						echo("**************************************<br/>");
+						echo("Ngày đăng: ".CommonFuns::int_to_date2($arrprodetail[$i]->getDateCreate())." <br/>");
+						echo($arrprodetail[$i]->getInfoRequest()."<br/>");
+					}
+				}
+				?>
+            </td>
         </tr>
         <tr><td colspan="2"><hr style="border: 1px solid; margin-top:4px; margin-bottom: 4px;"></td></tr>
         <tr>
         	<th align="left">Số Tiền Vay</th>
-            <td><?php echo($arrprofile[0][9]) ?></td>
+            <td><?php if ($arrprodetail[0]->getAmountLoan() != "") { echo(CommonFuns::changnumbermoney($arrprodetail[0]->getAmountLoan())) ?> VNĐ <?php } ?></td>
         </tr>
         <tr><td colspan="2"><hr style="border: 1px solid; margin-top:4px; margin-bottom: 4px;"></td></tr>
         <tr>
         	<th align="left">Ngân Hàng Vay</th>
-            <td><?php echo($arrprofile[0][10]) ?></td>
+            <td><?php echo($arrprodetail[0]->getBankLoan()) ?></td>
         </tr>
         <tr><td colspan="2"><hr style="border: 1px solid; margin-top:4px; margin-bottom: 4px;"></td></tr>
         <tr>
-        	<th align="left">Hoa Hồng(%)</th>
-            <td><?php echo($arrprofile[0][11]) ?></td>
+        	<th align="left">Hoa Hồng(VNĐ)</th>
+            <td><?php if ($arrprodetail[0]->getHoaHong() != "") { echo(CommonFuns::changnumbermoney($arrprodetail[0]->getHoaHong()) )?> VNĐ<?php } ?></td>
         </tr>
         <tr><td colspan="2"><hr style="border: 1px solid; margin-top:4px; margin-bottom: 4px;"></td></tr>
         <tr>
         	<th align="left">Ngày Cập Nhật</th>
-            <td><?php if ($arrprofile[0][14] != "") echo(int_to_date($arrprofile[0][14])); ?></td>
+            <td><?php if($arrprodetail[0]->getDateUpdate() != "") echo(CommonFuns::int_to_date2($arrprodetail[0]->getDateUpdate())) ?></td>
         </tr>
         
         <tr><td colspan="2"><hr style="border: 1px solid; margin-top:4px; margin-bottom: 4px;"></td></tr>
         <tr>
-        	<th colspan="2"><input class="class-edit-detail-profile-link" type="button" value="Chỉnh Sửa" style="border-radius: 5px; padding:5px; width:100px; background:#03F; color:#FFF; font-weight:bold;" /></th>
+        	<th colspan="2"><input class="class-edit-detail-profile-link btnclra" type="button" value="Chỉnh Sửa" style="border-radius: 5px; padding:5px; width:100px; font-weight:bold;" /></th>
         </tr>
     </table>
 </div>
+<div style="clear: both; height: 20px;"></div>
+<?php
+if (count($arrprodetail) > 0) {
+?>
+<div style="margin:auto; width:980px; text-align: center;"><h2 style="color:#88A943; text-transform:uppercase; margin:auto;">Lịch Sử Giao Dịch</h2></div>
+<div style="width: 980px; max-width: 980px; margin: auto;"  class="class-content-records">
+	<table width="980px" cellpadding="0" cellspacing="0" style="font-size: 12px; border-collapse: collapse; margin-left:5px;">
+        <tr>
+            <th class="class-headertable" width="30px">STT</th>
+            <th class="class-headertable" width="110px">Ngày login</th>
+            <th class="class-headertable" width="140px">Tình trạng</th>
+            <th class="class-headertable">Thông tin chi tiết</th>
+            <th class="class-headertable" width="250px">Tài Chính Online phản hồi</th>
+            <th class="class-headertable" width="110px">Ngày cập nhật</th>
+        </tr>
+        <?php
+		$icount = 1;
+		for ($icount = 1; $icount < count($arrprodetail); $icount++) {
+		?>
+        <tr>
+        	<td align="center"><span><?php echo($icount) ?></span></td>
+            <td align="center"><span><?php echo(CommonFuns::int_to_date2($arrprodetail[$icount]->getDateCreateFirst())); ?></span></td>
+            <td align="center"><span><?php echo($arrprodetail[$icount]->getStatus()->getStatusName()); ?></span></td>
+            <td align="left"><span><?php echo($arrprodetail[$icount]->getInfoProfile()); ?></span></td>
+            <td align="left"><span><?php echo($arrprodetail[$icount]->getInfoRequest()); ?></span></td>
+            <td align="center"><span><?php echo(CommonFuns::int_to_date2($arrprodetail[$icount]->getDateUpdate())); ?></span></td>
+        </tr>
+        <?php
+		}
+		?>
+    </table>
+</div>
+
+<div style="clear: both; height: 20px;"></div>
+<?php
+}
+?>
+<style>
+
+.class-headertable {
+	height: 30px;
+	margin: auto;
+	background: rgb(136, 169, 67);
+}
+.class-content-records th {
+	color: #FFF;
+}
+
+.class-content-records table tr {height: 30px;min-height: 30px;}
+.class-content-records table tr {display: table-row;vertical-align: inherit;border-color: inherit;} 
+.class-content-records table tr th, .class-content-records table tr td {border: 1px solid #98bf21;}
+
+.class-button-update {
+	border:none;
+	background: #88A943;
+	text-indent: 1px;
+	width: 150px;
+	height:30px;
+	cursor: pointer;
+	font-weight: bold;
+	font-size: 12px;
+	border-radius: 5px;
+}
+</style>
 
 <div style="clear:both;"></div>
 <div class="reveal-modal-bg"></div>
@@ -172,45 +237,62 @@ if(isset($_GET['rei'])) {
     	<table>
         	<tr>
             	<th align="left" width="120px">Tên Khách Hàng</th>
-                <td><input style="height:30px; width:280px" name="From_NameCus" id="From_NameCus" value="<?php echo($arrprofile[0][2]) ?>" type="text" size="40" maxlength="500"></td>
+                <td><input style="height:30px; width:280px" name="From_NameCus" id="From_NameCus" value="<?php echo($arrprodetail[0]->getNameCustomer()) ?>" type="text" size="40" maxlength="500"></td>
             </tr>
             <tr>
             	<th align="left" width="120px">Số điện thoại</th>
-                <td><input style="height:30px; width:280px" name="From_phoneCus" value="<?php echo($arrprofile[0][15]) ?>" id="From_phoneCus" type="text" size="40" maxlength="100"></td>
+                <td><input style="height:30px; width:280px" name="From_phoneCus" value="<?php echo($arrprodetail[0]->getPhoneNumber()) ?>" id="From_phoneCus" type="text" size="40" maxlength="100"></td>
             </tr>
             <tr>
             	<th align="left" width="120px">Ngày Đăng</th>
-                <td><?php echo(int_to_date($arrprofile[0][13])) ?></td>
+                <td><?php echo(CommonFuns::int_to_date2($arrprodetail[0]->getDateCreateFirst())) ?></td>
             </tr>
             <tr>
             	<th align="left" width="120px" valign="top">TT Tóm Tắt</th>
-                <td><?php echo($arrprofile[0][5]) ?></td>
+                <td>
+					<?php echo($arrprodetail[0]->getInfoProfile()."<br/>"); ?>
+					<?php
+                    for ($i = 1; $i < count($arrprodetail); $i++) {
+                        echo("**************************************<br/>");
+                        echo("Ngày đăng: ".CommonFuns::int_to_date2($arrprodetail[$i]->getDateCreate())." <br/>");
+                        echo($arrprodetail[$i]->getInfoProfile()."<br/>");
+                    }
+                    ?>
+                </td>
             </tr>
             <tr><td colspan="2"><hr style="border: 1px solid thin; margin-top:4px; margin-bottom: 4px;"></td></tr>
             <tr>
             	<th align="left" width="120px" valign="top">Trạng Thái</th>
                 <td>
-                <select id="form_statusupdate" style="height: 23px; width:200px; margin-right:10px;"><option value="Chưa Kiểm Tra">Chưa Kiểm Tra</option><option value="Chờ kiểm tra">Chờ kiểm tra</option><option value="Đang kiểm tra">Đang kiểm tra</option><option value="Đang chờ bổ sung">Đang chờ bổ sung</option><option value="Đang thẩm định">Đang thẩm định</option><option value="Hoàn Tất">Hoàn Tất</option><option value="Từ chối">Từ chối</option></select>
+                <select id="form_statusupdate" style="height: 23px; width:200px; margin-right:10px;">
+					<?php
+					foreach ($statusList as $aStatus) {
+						
+					?>
+                        <option value="<?php echo ($aStatus->getStatusID()); ?>" <?php if ($aStatus->getStatusID() == $arrprodetail[0]->getStatus()->getStatusID()) {?> selected="selected" <?php } ?>><?php echo ($aStatus->getStatusName()); ?></option>
+                    <?php
+					}
+					?></select>
                 </td>
             </tr>
             <tr>
             	<th align="left" width="120px" valign="top">TT Phản Hồi</th>
-                <td><input type="hidden" value="<?php echo($arrprofile[0][7]) ?>" name="inforequesttemp" id="inforequesttemp" /><textarea style="resize:none; width: 100%;" rows="4" name="form-inforequest" class="form-inforequest" id="form-inforequest"></textarea></td>
+                <td><textarea style="resize:none; width: 100%;" rows="4" name="form-inforequest" class="form-inforequest" id="form-inforequest"><?php echo($arrprodetail[0]->getInfoRequest()); ?></textarea></td>
             </tr>
             <tr>
             	<th align="left" width="120px" valign="top">Số Tiền Vay</th>
-                <td><input value="<?php echo($arrprofile[0][9]) ?>" name="form_amoun1" id="form_amoun1" style="height: 23px; width:200px; margin-right:10px; padding:5px;" maxlength="30" /></td>
+                <td><input value="<?php echo($arrprodetail[0]->getAmountLoan()) ?>" name="form_amoun1" id="form_amoun1" style="height: 23px; width:200px; margin-right:10px; padding:5px;" maxlength="30" /> VNĐ</td>
             </tr>
             <tr>
-            	<th align="left" width="120px" valign="top">Ngân Hàng Vay</th>
-                <td><input value="<?php echo($arrprofile[0][10]) ?>" name="form_amoun2" id="form_amoun2" style="height: 23px; width:200px; margin-right:10px; padding:5px;" maxlength="500" /></td>
+            	<th align="left" width="120px" valign="top">Tổ chức cho vay</th>
+                <td><input value="<?php echo($arrprodetail[0]->getBankLoan()) ?>" name="form_amoun2" id="form_amoun2" style="height: 23px; width:200px; margin-right:10px; padding:5px;" maxlength="500" /></td>
             </tr>
             <tr>
-            	<th align="left" width="120px" valign="top">Hoa Hồng</th>
-                <td><input value="<?php echo($arrprofile[0][11]) ?>" name="form_amoun2" id="form_amoun3" maxlength="30" style="height: 23px; width:200px; margin-right:10px; padding:5px;" /></td>
+            	<th align="left" width="120px" valign="top">Hoa hồng</th>
+                <td><input value="<?php echo($arrprodetail[0]->getHoaHong()) ?>" name="form_amoun2" id="form_amoun3" maxlength="30" style="height: 23px; width:200px; margin-right:10px; padding:5px;" /> VNĐ</td>
             </tr>
             <tr>
-                <th colspan="2"><input class="class-update-detail-profile-link" type="button" value="Cập Nhật" style="border-radius: 5px; padding:5px; width:100px; background:#03F; color:#FFF; font-weight:bold;" /></th>
+                <th colspan="2"><input class="class-update-detail-profile-link btnclra" type="button" value="Cập Nhật" style="border-radius: 5px; padding:5px; width:100px; font-weight:bold;" /></th>
             </tr>
         </table>
     </div>
@@ -218,7 +300,6 @@ if(isset($_GET['rei'])) {
 </div>
 <script src="../ckeditor/ckeditor.js"></script>
 <script>
-$('#form_statusupdate').val('<?php echo($arrprofile[0][8]) ?>');
 $(document).on('click', '.close-reveal-modal', function(e) {
 		clostshowbankdeleted();
 	});
@@ -236,7 +317,6 @@ $(document).on('click', '.close-reveal-modal', function(e) {
 		$('#showlistbankdeletedlightbox').show();
 	});
 	$('.class-update-detail-profile-link').click(function(e) {
-		var inforequest = $('#inforequesttemp').val();
 		var id = '<?php echo($idpro) ?>';
 		var namecus = $('#From_NameCus').val();
 		var phonecus = $('#From_phoneCus').val();
@@ -273,7 +353,7 @@ $(document).on('click', '.close-reveal-modal', function(e) {
 		$.ajax({
 			url: "../src/ajax/ajaxprofileloan.php",
 			type: "post",
-			data: {act:'edit', rei: id, name: namecus, phone: phonecus, stre: status, cont: contentrequest, amo1: amount1, amo2: amount2, amo3: amount3, ifretemp: inforequest},
+			data: {act:'edit', rei: id, name: namecus, phone: phonecus, stre: status, cont: contentrequest, amo1: amount1, amo2: amount2, amo3: amount3},
 			dataType:"json",
 			success: function(response) {
 				if(response == true) {
@@ -287,6 +367,8 @@ $(document).on('click', '.close-reveal-modal', function(e) {
 	});
 $(document).ready(function(e) {
 	CKEDITOR.replace('form-inforequest');
+	
+	$("#showlistbankdeletedlightbox").height($( window ).height());
 });
 </script>
 <?php

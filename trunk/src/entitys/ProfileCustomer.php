@@ -20,6 +20,7 @@ class ProfileCustomer {
 	private $hoaHong;
 	private $isgnore;
 	private $dateCreate;
+	private $dateCreateFirst;
 	private $dateUpdate;
 	private $isBackup;
 	private $userBackup;
@@ -45,6 +46,7 @@ class ProfileCustomer {
 		$this -> hoaHong = '';
 		$this -> isgnore = false;
 		$this -> dateCreate = '';
+		$this -> dateCreateFirst = '';
 		$this -> dateUpdate = '';
 		$this -> isBackup = false;
 		$this -> userBackup = '';
@@ -180,6 +182,14 @@ class ProfileCustomer {
 	
 	public function setDateCreate($dateCreate) {
 		$this -> dateCreate = $dateCreate;
+	}
+	
+	public function getDateCreateFirst(){
+		return $this -> dateCreateFirst;
+	}
+	
+	public function setDateCreateFirst($dateCreateFirst) {
+		$this -> dateCreateFirst = $dateCreateFirst;
 	}
 	
 	public function getDateUpdate(){

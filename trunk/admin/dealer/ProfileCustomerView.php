@@ -269,13 +269,13 @@ $statusList = $statusDAO->getStatuss(0);
 			?>
             <tr>
             	<td align="center"><?php echo($i) ?></td>
-                <td align="center"><?php echo(CommonFuns::int_to_date($profile->getDateCreate())) ?></td>
+                <td align="center"><?php echo(CommonFuns::int_to_date2($profile->getDateCreateFirst())) ?></td>
             	<td><span style="margin-left:5px; margin-right:5px;"><strong><a href="/admin/?content=daily&p=chi-tiet-ho-so-khach-hang&rei=<?php echo($profile->getIDProfile()) ?>"><?php echo($profile->getNameCustomer()) ?></a></strong></span></td>
                 <td align="center"><span style="margin-left:5px; margin-right:5px;"><strong><?php echo($profile->getIDCODE()) ?></strong></span></td>
                 <td align="center"><?php echo($profile->getTypeLoan()->getLoanName()) ?></td>
                 <td align="center"><?php echo($profile->getProvince()) ?></td>
                 <td align="center"><?php if ($profile->getStatus()->getStatusID() != "") { echo($profile->getStatus()->getStatusName()); } else { echo("Hồ sơ Mới");} ?></td>
-                <td align="center"><?php if($profile->getDateUpdate() != "") echo(CommonFuns::int_to_date($profile->getDateUpdate())) ?></td>
+                <td align="center"><?php if($profile->getDateUpdate() != "") echo(CommonFuns::int_to_date2($profile->getDateUpdate())) ?></td>
                 <td align="center"><a href="/admin/?content=daily&p=chi-tiet-ho-so-khach-hang&rei=<?php echo($profile->getIDProfile()) ?>"><img title="Xem chi tiết hồ sơ của <?php echo($profile->getNameCustomer()) ?>" style="cursor:pointer" src="/images/icon-detail.gif" class="class-detail-profile-link" idpro="<?php echo($profile->getIDProfile()) ?>"  height="20" /></a>&nbsp; | &nbsp;<img idpr="<?php echo($profile->getIDProfile()) ?>" class="class-deletequestion-link" src="/images/icon-delete.gif" height="20" title="Xóa" /></td>
             </tr>
             <?php
