@@ -1,0 +1,79 @@
+RewriteEngine on
+
+#RewriteCond %{HTTP_REFERER} !^$
+#RewriteCond %{HTTP_REFERER} !^http://dlduynam.tk(/.*)?$ [NC]
+#RewriteCond %{HTTP_REFERER} !^http://gallery.dlduynam.tk(/.*)?$ [NC]
+#RewriteCond %{HTTP_REFERER} !^http://www.dlduynam.tk(/.*)?$ [NC]
+#RewriteCond %{HTTP_REFERER} !^https://www.facebook.com(/.*)?$ [NC]
+#RewriteCond %{HTTP_REFERER} !^https://www.google.com.*$ [NC]
+#RewriteRule .*.(gif|jpg|jpeg|bmp|png|txt)$ http://www.lipstiq.com/wp-content/uploads/2013/05/new_hotlink-logo-copy.jpg [R,NC]
+
+RewriteBase /
+Options +FollowSymLinks
+RewriteRule ^dang-ky-dai-ly.html$ /registryDaily.php [L]
+RewriteRule ^quanly/cap-nhat-ho-so/(.*)/(.*).html$ /managerOfDaiLy.php?p=profile-update&id=$1 [L]
+RewriteRule ^quanly/chi-tiet-ho-so/(.*)/(.*).html$ /managerOfDaiLy.php?p=profile-detail&id=$1 [L]
+RewriteRule ^quanly/profile_search/key_(.*)/status_(.*)/start_(.*)/end_(.*)/(.*).html$ /managerOfDaiLy.php?c=project-detail&key=$1&sta=$2&start=$3&end=$4&page=$5 [L]
+RewriteRule ^quanly/profile.html&mess=(.*)$ /managerOfDaiLy.php?c=project-detail&mess=$1 [L]
+RewriteRule ^quanly/profile.html$ /managerOfDaiLy.php?c=project-detail&p=$1 [L]
+RewriteRule ^quanly/new-profile.html$ /managerOfDaiLy.php?c=project-detail&p=new-profile [L]
+RewriteRule ^project/(.*)/?$ /index.php?c=$1 [L]
+RewriteRule ^thong-tin/(.*)/?$ /index.php?c=$1 [L]
+
+ErrorDocument 404 /index.php
+
+# BEGIN Compress text files
+<IfModule mod_deflate.c>
+  <FilesMatch "\.(css|js|x?html?|php)$">
+    SetOutputFilter DEFLATE
+  </FilesMatch>
+</IfModule>
+# END Compress text files
+ 
+# BEGIN Expire headers
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresDefault "access plus 1 seconds"
+  ExpiresByType image/x-icon "access plus 2592000 seconds"
+  ExpiresByType image/jpeg "access plus 2592000 seconds"
+  ExpiresByType image/png "access plus 2592000 seconds"
+  ExpiresByType image/gif "access plus 2592000 seconds"
+  ExpiresByType application/x-shockwave-flash "access plus 2592000 seconds"
+  ExpiresByType text/css "access plus 604800 seconds"
+  ExpiresByType text/javascript "access plus 216000 seconds"
+  ExpiresByType application/javascript "access plus 216000 seconds"
+  ExpiresByType application/x-javascript "access plus 216000 seconds"
+  ExpiresByType text/html "access plus 600 seconds"
+  ExpiresByType application/xhtml+xml "access plus 600 seconds"
+</IfModule>
+# END Expire headers
+ 
+# BEGIN Cache-Control Headers
+<IfModule mod_headers.c>
+  <FilesMatch "\.(ico|jpe?g|png|gif|swf)$">
+    Header set Cache-Control "max-age=2592000, public"
+  </FilesMatch>
+  <FilesMatch "\.(css)$">
+    Header set Cache-Control "max-age=604800, public"
+  </FilesMatch>
+  <FilesMatch "\.(js)$">
+    Header set Cache-Control "max-age=216000, private"
+  </FilesMatch>
+  <FilesMatch "\.(x?html?|php)$">
+    Header set Cache-Control "max-age=600, private, must-revalidate"
+  </FilesMatch>
+</IfModule>
+# END Cache-Control Headers
+ 
+# BEGIN Turn ETags Off
+<IfModule mod_headers.c>
+  Header unset ETag
+</IfModule>
+FileETag None
+# END Turn ETags Off
+ 
+# BEGIN Remove Last-Modified Header
+<IfModule mod_headers.c>
+  Header unset Last-Modified
+</IfModule>
+# END Remove Last-Modified Header
