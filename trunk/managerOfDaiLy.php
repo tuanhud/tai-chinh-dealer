@@ -54,7 +54,8 @@ $email = $_SESSION['taichinhondealer'];
             <ul>
 	            <li class="first canhanpage">THÔNG TIN CÁ NHÂN</li>
                 <li class="thongbaopage-click">THÔNG BÁO</li>
-    	        <li class="last hosocuabanpage">TẤT CẢ HỒ SƠ ĐÃ LOGIN</li>
+    	        <li class="hosocuabanpage">TẤT CẢ HỒ SƠ ĐÃ LOGIN</li>
+    	        <li class="last logout">THOÁT</li>
             </ul>
         </div>
    	</div>
@@ -69,6 +70,8 @@ $email = $_SESSION['taichinhondealer'];
 			$contentPage = "dealer/DetailProfileCustomer.php";
 		} else if ($_GET['p'] == "profile-update") {
 			$contentPage = "dealer/UpdateProfileCustomer.php";
+		} else if ($_GET['p'] == "info-account") {
+			$contentPage = "dealer/ProfileInfo.php";
 		}
 	}
 	include($contentPage);
@@ -81,6 +84,14 @@ $email = $_SESSION['taichinhondealer'];
 $(document).ready(function(e) {
     $(document).on("click", ".hosocuabanpage", function() {
 		window.location = "/quanly/profile.html";
+	});
+	
+	$(document).on("click", ".canhanpage", function() {
+		window.location = "/profile/ca-nhan.html";
+	});
+	
+	$(document).on("click", ".logout", function() {
+		window.location = "/control/LogoutDealer.php";
 	});
 	
 	<?php

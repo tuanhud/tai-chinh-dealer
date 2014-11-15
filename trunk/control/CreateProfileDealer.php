@@ -66,7 +66,7 @@ if(isset($_SESSION['taichinhondealer'])) {
 						$extension = getExtension($filename);
 						$extension = strtolower($extension);
 						// Nếu nó không phải là file hình thì sẽ thông báo lỗi
-						if (($extension != "rar") && ($extension != "zip") &&($extension != 'doc') && ($extension != 'xls') && ($extension != 'jpg') && ($extension != 'png')) {
+						if (($extension != "rar") && ($extension != "zip") &&($extension != 'doc') &&($extension != 'docx') && ($extension != 'xls') && ($extension != 'xlsx') && ($extension != 'jpg') && ($extension != 'png')) {
 							// xuất lỗi ra màn hình
 							//echo '<h1>Đây không phải là file hình!</h1>';
 							$errors=1;
@@ -153,7 +153,7 @@ if(isset($_SESSION['taichinhondealer'])) {
 				}
 			}
 		} else if($act == "edit") { // update info
-			if(isset($_POST['Form_id']) && isset($_POST['form_infointro'])) {
+			if(isset($_POST['Form_id']) && isset($_POST['Form_id_date']) && isset($_POST['form_infointro'])) {
 				$newname = "";
 				$nameimagesave = array();
 				// up load file image
@@ -190,7 +190,7 @@ if(isset($_SESSION['taichinhondealer'])) {
 						$extension = getExtension($filename);
 						$extension = strtolower($extension);
 						// Nếu nó không phải là file hình thì sẽ thông báo lỗi
-						if (($extension != "rar") && ($extension != "zip") &&($extension != 'doc') && ($extension != 'xls') && ($extension != 'jpg') && ($extension != 'png')) {
+						if (($extension != "rar") && ($extension != "zip") &&($extension != 'doc') &&($extension != 'docx') && ($extension != 'xls') && ($extension != 'xlsx') && ($extension != 'jpg') && ($extension != 'png')) {
 							// xuất lỗi ra màn hình
 							//echo '<h1>Đây không phải là file hình!</h1>';
 							$errors=1;
@@ -221,34 +221,78 @@ if(isset($_SESSION['taichinhondealer'])) {
 				
 				$idpro = $_POST['Form_id'];
 				if($errors == 0) {
-					$infocus = $_POST['form_infointro'];
-					$currentDate = date("d-m-Y H:i");
-					$infocus .= '<p>Ng&agrave;y chỉnh sửa: '.$currentDate.'</p><hr /><p>&nbsp;</p>';
 					
-					$nameimagesave .= $_POST['filenameprofiletemp'];
-					if($_POST['filenameprofiletemp'] == "" && $countfilename > 0) {
-						$nameimagesave = substr($nameimagesave, 0, -1);
-					}
+					$profile = new ProfileCustomer();
 					
-					if(isset($_POST['infointrotemp'])) {
-						$introtemp = $_POST['infointrotemp'];
-						$infocus = $introtemp.$infocus;
-					}
-					if(updateProfileDealer($idpro, $infocus, $nameimagesave)) {
-						header("Location: /profile/ho-so/detail/".$idpro."/success.html");
-						$_SESSION['mess'] = "success";
+					$profile = $profileDAO->getProfileByIDProOnly($idpro, $_POST['Form_id_date']);
+					if ($profile->getIDProfile() == "") {
+						$_SESSION['mess'] = "fail";
+						header("Location: /quanly/cap-nhat-ho-so/".$idpro."/error.html");
 						return;
+					}
+					
+					$profile->setInfoProfile(trim($_POST['form_infointro']));
+					$profile->setDateUpdate(time());
+					$profile->setDateCreate(time());
+					
+					$userManager = $authorLinkDealerDAO->getInfoUserManagerByDealer($emailacc);
+					if ($userManager == "") {
+						$_SESSION['mess'] = "fail";
+						header("Location: /quanly/cap-nhat-ho-so/".$idpro."/error.html");
+						return;
+					}
+					$profile->setUserManager($userManager);
+					
+					$codeID = $dealerDAO->getInfoCodeByDealer($emailacc);
+					if ($codeID == "") {
+						$_SESSION['mess'] = "fail";
+						header("Location: /quanly/cap-nhat-ho-so/".$idpro."/error.html");
+						return;
+					}
+					$profile->setIDCODE($codeID);
+					
+					
+					$profile->setInfoProfile(trim($_POST['form_infointro']));
+					
+					$profileBackup = new ProfileCustomer();
+					$profileBackup->setIDProfile($idpro);
+					$profileBackup->setDateCreate($_POST['Form_id_date']);
+					$profileBackup->setIsBackup(true);
+					$profileBackup->setUserBackup($emailacc);
+					if($profileDAO->backupProfileDealer($profileBackup)) {
+						if ($profileDAO->insertProfileDealer($profile)) {
+							if(count($nameimagesave) > 0) {
+								foreach ($nameimagesave as $link) {
+									$fileProfile = new FileProfile();
+									$fileProfile->setLinkFile($link);
+									$fileProfile->setIdProfile($profile->getIDProfile());
+									$fileProfile->setDateCreated($profile->getDateCreate());
+									if ($fileProfileDAO->insertFileProfile($fileProfile)) {
+										
+									}
+								}
+							}
+							$_SESSION['mess'] = "success";
+							header("Location: /quanly/cap-nhat-ho-so/".$idpro."/success.html");
+							return;
+						} else {
+							$_SESSION['mess'] = "fail";
+							header("Location: /quanly/cap-nhat-ho-so/".$idpro."/error.html");
+							return;
+						}
 					} else {
-						header("Location: /profile/ho-so/detail/".$idpro."/error.html");
+						$_SESSION['mess'] = "fail";
+						header("Location: /quanly/cap-nhat-ho-so/".$idpro."/error.html");
 						return;
 					}
 				} else {
-					header("Location: /profile/ho-so/detail/".$idpro."/error.html");
+					$_SESSION['mess'] = "fail";
+					header("Location: /quanly/cap-nhat-ho-so/".$idpro."/error.html");
 					return;
 				}
 			}
 		} else {
-			header("Location: /profile/ho-so-cua-ban.html");
+			header("Location: /quanly/profile.html");
 			return;
 		}
 		
@@ -256,11 +300,11 @@ if(isset($_SESSION['taichinhondealer'])) {
 		
 		
 	} else {
-		header("Location: /profile/ho-so-cua-ban.html");
+		header("Location: /quanly/profile.html");
 		return;
 	}
 } else {
-	header("Location: /dang-nhap.html");
+	header("Location: /");
 	return;
 }
 ?>
