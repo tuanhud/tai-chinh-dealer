@@ -11,28 +11,6 @@ $profileDAO = new ProfileCustomerDAO();
 $statusDAO = new StatusDAO();
 $typeLoanDAO = new TypeLoanDAO();
 
-/*
-
-function getProfiles($emailsr, $namesr, $statussr, $city, $typeloan, $tempsql, $start, $lenght) {
-	$con = new ConnectDB();
-	
-	$sql = "Select p.idpro,r.idcode,p.namecustomer,p.province,tl.namepurp,p.statusquo,p.datecreate,p.dateupdate FROM profilecustomer as p, registrationbank AS r, purposeloan AS tl WHERE p.loantype=tl.idpurpose AND p.regis_email=r.regis_email AND r.idcode LIKE '%".$emailsr."%' AND p.namecustomer LIKE '%".$namesr."%' AND p.statusquo LIKE '%".$statussr."%' AND p.province LIKE '%".$city."%' AND p.loantype LIKE '%".$typeloan."%' ".$tempsql."  ORDER BY p.datecreate DESC LIMIT ".$start.",".$lenght;
-	return $con -> getvalueString($sql);
-}
-
-function getRowsProfile($emailsr, $namesr, $statussr, $city, $typeloan, $tempsql) {
-	$con = new ConnectDB();
-	
-	$sql = "Select COUNT(*) FROM profilecustomer as p, registrationbank AS r WHERE p.regis_email=r.regis_email AND r.idcode LIKE '%".$emailsr."%' AND p.namecustomer LIKE '%".$namesr."%' AND p.statusquo LIKE '%".$statussr."%' AND p.province LIKE '%".$city."%' AND p.loantype LIKE '%".$typeloan."%' ".$tempsql;
-	return $con -> getvalueString($sql);
-}
-
-function int_to_date($int)
-{
-    $time  = date("d/m/Y", $int);
-    return $time;
-}*/
-
 $namesr = "";
 $emailsr = "";
 $statussr = "";
@@ -274,9 +252,9 @@ $statusList = $statusDAO->getStatuss(0);
                 <td align="center"><span style="margin-left:5px; margin-right:5px;"><strong><?php echo($profile->getIDCODE()) ?></strong></span></td>
                 <td align="center"><?php echo($profile->getTypeLoan()->getLoanName()) ?></td>
                 <td align="center"><?php echo($profile->getProvince()) ?></td>
-                <td align="center"><?php if ($profile->getStatus()->getStatusID() != "") { echo($profile->getStatus()->getStatusName()); } else { echo("Hồ sơ Mới");} ?></td>
+                <td align="center"><?php if($profile->isDelete()) { echo("<strong><span style='color: red'>Hồ sơ đã xóa</span></strong>"); } else if ($profile->getStatus()->getStatusID() != "") { echo($profile->getStatus()->getStatusName()); } else { echo("Hồ sơ Mới");} ?></td>
                 <td align="center"><?php if($profile->getDateUpdate() != "") echo(CommonFuns::int_to_date2($profile->getDateUpdate())) ?></td>
-                <td align="center"><a href="/admin/?content=daily&p=chi-tiet-ho-so-khach-hang&rei=<?php echo($profile->getIDProfile()) ?>"><img title="Xem chi tiết hồ sơ của <?php echo($profile->getNameCustomer()) ?>" style="cursor:pointer" src="/images/icon-detail.gif" class="class-detail-profile-link" idpro="<?php echo($profile->getIDProfile()) ?>"  height="20" /></a>&nbsp; | &nbsp;<img idpr="<?php echo($profile->getIDProfile()) ?>" class="class-deletequestion-link" src="/images/icon-delete.gif" height="20" title="Xóa" /></td>
+                <td align="center"><a href="/admin/?content=daily&p=chi-tiet-ho-so-khach-hang&rei=<?php echo($profile->getIDProfile()) ?>"><img title="Xem chi tiết hồ sơ của <?php echo($profile->getNameCustomer()) ?>" style="cursor:pointer" src="/images/icon-detail.gif" class="class-detail-profile-link" idpro="<?php echo($profile->getIDProfile()) ?>"  height="20" /></a><?php if ($authorUser->isDeleteProfile() && !$profile->isDelete()) { ?>&nbsp; | &nbsp;<img idpr="<?php echo($profile->getIDProfile()) ?>" class="class-deletequestion-link" src="/images/icon-delete.gif" height="20" title="Xóa" /><?php } ?></td>
             </tr>
             <?php
 				$i++;
@@ -360,14 +338,16 @@ $(document).on('click', '.class-detail-profile-link', function() {
 	function openwindowns(url) {
 		window.location = url;
 	}
-	
+	<?php 
+	if ($authorUser->isDeleteProfile()) { 
+	?>
 	$(document).on('click', '.class-deletequestion-link', function() {
 		elem = $(this);
 		id = elem.attr('idpr');
 		if(confirm('Bạn thực sự muốn xóa?')) {
 			$.ajax({
 				type: "POST",
-				url: "../src/ajax/ajaxprofileloan.php",
+				url: "/admin/control/ajax/AjaxUpdateProfileLoan.php",
 				data:{act: 'del', idpe: id},
 				dataType: "json",
 				success: function(response){
@@ -381,4 +361,7 @@ $(document).on('click', '.class-detail-profile-link', function() {
 			});
 		}
 	});
+	<?php
+	}
+	?>
 </script>

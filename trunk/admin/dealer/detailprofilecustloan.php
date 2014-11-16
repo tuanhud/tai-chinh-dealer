@@ -24,7 +24,7 @@ if(isset($_GET['rei'])) {
 	left: 50%;
 	margin-left: -300px;
 	width: 600px;
-	background: #eee url(../modal-gloss.png) no-repeat -200px -80px;
+	background: #eee url(/modal-gloss.png) no-repeat -200px -80px;
 	position: absolute;
 	z-index: 101;
 	padding: 0px 0px 0px;
@@ -157,11 +157,16 @@ if(isset($_GET['rei'])) {
         	<th align="left">Ngày Cập Nhật</th>
             <td><?php if($arrprodetail[0]->getDateUpdate() != "") echo(CommonFuns::int_to_date2($arrprodetail[0]->getDateUpdate())) ?></td>
         </tr>
-        
         <tr><td colspan="2"><hr style="border: 1px solid; margin-top:4px; margin-bottom: 4px;"></td></tr>
+        <?php 
+		if ($aAdminUser->isRoot() || ($authorUser->isEditProfile() && !$arrprodetail[0]->isDelete())) { 
+		?>
         <tr>
         	<th colspan="2"><input class="class-edit-detail-profile-link btnclra" type="button" value="Chỉnh Sửa" style="border-radius: 5px; padding:5px; width:100px; font-weight:bold;" /></th>
         </tr>
+        <?php
+		}
+		?>
     </table>
 </div>
 <div style="clear: both; height: 20px;"></div>
@@ -230,6 +235,9 @@ if (count($arrprodetail) > 0) {
 </style>
 
 <div style="clear:both;"></div>
+<?php 
+		if ($aAdminUser->isRoot() || ($authorUser->isEditProfile() && !$arrprodetail[0]->isDelete())) { 
+?>
 <div class="reveal-modal-bg"></div>
 <div id="showlistbankdeletedlightbox">
 	<div class="reveal-modal-title"><h1>Cập Nhật Thông Tin Hồ Sơ</h1></div><br />
@@ -298,7 +306,8 @@ if (count($arrprodetail) > 0) {
     </div>
     <a class="close-reveal-modal">&#215;</a>
 </div>
-<script src="../ckeditor/ckeditor.js"></script>
+<script src="/ckeditor/ckeditor.js"></script>
+
 <script>
 $(document).on('click', '.close-reveal-modal', function(e) {
 		clostshowbankdeleted();
@@ -318,11 +327,12 @@ $(document).on('click', '.close-reveal-modal', function(e) {
 	});
 	$('.class-update-detail-profile-link').click(function(e) {
 		var id = '<?php echo($idpro) ?>';
-		var namecus = $('#From_NameCus').val();
-		var phonecus = $('#From_phoneCus').val();
-		var status = $('#form_statusupdate').val();
-		var contentrequest = CKEDITOR.instances['form-inforequest'].getData();
-		var amount1 = $('#form_amoun1').val();
+		var dateCreate = '<?php echo($arrprodetail[0]->getDateCreate()) ?>';
+		var namecus = $.trim($('#From_NameCus').val());
+		var phonecus = $.trim($('#From_phoneCus').val());
+		var status = $.trim($('#form_statusupdate').val());
+		var contentrequest = $.trim(CKEDITOR.instances['form-inforequest'].getData());
+		var amount1 = $.trim($('#form_amoun1').val());
 		var re_num = /^([^0-9]*)$/;
 		
 		if(namecus.length == 0) {
@@ -330,32 +340,34 @@ $(document).on('click', '.close-reveal-modal', function(e) {
 			$('#From_NameCus').focus();
 			return false;
 		}
-		
 		if(phonecus.length == 0) {
 			alert('Vui lòng nhập số điện thoại khách hàng');
 			$('#From_phoneCus').focus();
 			return false;
 		}
 		
-		if(re_num.test(amount1)) {
+		if(amount1 != "" && re_num.test(amount1)) {
 			alert("Vui lòng nhập số tiền vay và phải là số");
 			$('#form_amoun1').focus();
 			return false;
 		}
 		var amount2 = $.trim($('#form_amoun2').val());
 		
-		var amount3 = $('#form_amoun3').val();
-		if(re_num.test(amount3)) {
+		var amount3 = $.trim($('#form_amoun3').val());
+		if(amount3 != "" && re_num.test(amount3)) {
 			alert("Vui lòng nhập phần trăm hoa hồng và phải là số");
 			$('#form_amoun3').focus();
 			return false;
 		}
+		
+		alert("sadsda");
 		$.ajax({
-			url: "../src/ajax/ajaxprofileloan.php",
+			url: "/admin/control/ajax/AjaxUpdateProfileLoan.php",
 			type: "post",
-			data: {act:'edit', rei: id, name: namecus, phone: phonecus, stre: status, cont: contentrequest, amo1: amount1, amo2: amount2, amo3: amount3},
+			data: {'act':'edit', 'rei': id, 'datecreate': dateCreate, 'name': namecus, 'phone': phonecus, 'stre': status, 'cont': contentrequest, 'quantityLoan': amount1, 'bankLoan': amount2, 'hoaHong': amount3},
 			dataType:"json",
 			success: function(response) {
+				alert(response);
 				if(response == true) {
 					alert("Cập Nhật Hồ Sơ Khách Hàng Thành Công");
 					location.reload();
@@ -372,6 +384,7 @@ $(document).ready(function(e) {
 });
 </script>
 <?php
+		}
 	}
 }
 ?>
