@@ -463,6 +463,18 @@ class ProfileCustomerDAO {
 		}
 	}
 	
+	function updateProfileDealerAdmin($profile) {
+		$con = new ConnectDB();
+		$tbl = CommonVals::$tbl_profile_customer;
+		$fn = array(CommonVals::$StatusID => $profile->getStatus()->getStatusID(), CommonVals::$NameCustomer => $profile->getNameCustomer(), CommonVals::$PhoneNumber => $profile->getPhoneNumber(), CommonVals::$InfoRequest => $profile->getInfoRequest(), CommonVals::$BankLoan => $profile->getBankLoan(), CommonVals::$AmountLoan => $profile->getAmountLoan(), CommonVals::$HoaHong => $profile->getHoaHong(), CommonVals::$dateupdate => $profile->getDateUpdate());
+		$conf = array(CommonVals::$IDPro => $profile->getIDProfile(), CommonVals::$datecreate => $profile->getDateCreate());
+		if ($con -> update($tbl, $fn, $conf)) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
 	function backupProfileDealer($profile) {
 		$isBackup = 0;
 		if ($profile->isBackup()) {
