@@ -49,16 +49,17 @@ if(isset($_SESSION['taichinhondealer'])) {
 				// lấy tên file upload
 				$countfilename = 0;
 				foreach ($_FILES['filenameprofile']['tmp_name'] as $key => $tmp_name) {
+					
 					$filename = $key.$_FILES['filenameprofile']['name'][$key];
 					$file_size =$_FILES['filenameprofile']['size'][$key];
 					$file_tmp =$_FILES['filenameprofile']['tmp_name'][$key];
 					$file_type=$_FILES['filenameprofile']['type'][$key];
 					
-					
 					$image= $filename;
 					
 					// Nếu nó không rỗng
 					if ($image) {
+						
 						// Lấy tên gốc của file
 						$filename = stripslashes($image);
 						//echo($filename);
@@ -79,11 +80,12 @@ if(isset($_SESSION['taichinhondealer'])) {
 								break;
 							} else {
 								// đặt tên mới cho file hình up lên
-								$image_name=time().'.'.$extension;
+								$image_name=time().rand(10,99).'.'.$extension;
 								// gán thêm cho file này đường dẫn
 								$newname="profilecutomer/".$image_name;
 								// kiểm tra xem file hình này đã upload lên trước đó chưa
-								$copied = copy($file_tmp, $newname);
+								$copied = copy($file_tmp, "../".$newname);
+								
 								if (!$copied) {
 									//echo '<h1> File này đã tồn tại </h1>';
 									$errors=1;
@@ -99,6 +101,7 @@ if(isset($_SESSION['taichinhondealer'])) {
 					$idpro = time();
 					$profile->setIDProfile($idpro);
 					$profile->setDateCreate($idpro);
+					$profile->setDateCreateFirst($idpro);
 					$profile->setEmailDealer($emailacc);
 					$profile->setNameCustomer(trim($_POST['From_NameCus']));
 					$profile->setPhoneNumber(trim($_POST['From_phoneCus']));
@@ -203,11 +206,11 @@ if(isset($_SESSION['taichinhondealer'])) {
 								break;
 							} else {
 								// đặt tên mới cho file hình up lên
-								$image_name=time().'.'.$extension;
+								$image_name=time().rand(10,99).'.'.$extension;
 								// gán thêm cho file này đường dẫn
 								$newname="profilecutomer/".$image_name;
 								// kiểm tra xem file hình này đã upload lên trước đó chưa
-								$copied = copy($file_tmp, $newname);
+								$copied = copy($file_tmp, "../".$newname);
 								if (!$copied) {
 									//echo '<h1> File này đã tồn tại </h1>';
 									$errors=1;
