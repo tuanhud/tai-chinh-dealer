@@ -47,6 +47,19 @@ if(isset($_GET['rei'])) {
 	font-weight: bold;
 	cursor: pointer;
 } 
+
+.reveal-modal-bg1 { 
+		position: fixed; 
+		height: 100%;
+		width: 100%;
+		background: #000;
+		background: rgba(0,0,0,.8);
+		z-index: 0;
+		display: none;
+		top: 0;
+		left: 0; 
+}
+
 .reveal-modal-title {
     background: url('../images/box-title-blue.jpg') repeat-x;
     height: 50px;
@@ -110,7 +123,7 @@ if(isset($_GET['rei'])) {
                 <ol>
 				<?php
                 for ($i = 0; $i < count($fileProfiles); $i++) {
-                    echo('<li>'.($i + 1).'.&nbsp;&nbsp;<a href="/'.$fileProfiles[$i] -> getLinkFile().'">Hồ sơ '.$fileProfiles[$i] -> getLinkFile().'</a></li>');
+                    echo('<li>&nbsp;&nbsp;<a href="/'.$fileProfiles[$i] -> getLinkFile().'">Hồ sơ '.$fileProfiles[$i] -> getLinkFile().'</a></li>');
                 }
                 ?>
             	</ol>
@@ -171,7 +184,7 @@ if(isset($_GET['rei'])) {
 </div>
 <div style="clear: both; height: 20px;"></div>
 <?php
-if (count($arrprodetail) > 0) {
+if (count($arrprodetail) > 1) {
 ?>
 <div style="margin:auto; width:980px; text-align: center;"><h2 style="color:#88A943; text-transform:uppercase; margin:auto;">Lịch Sử Giao Dịch</h2></div>
 <div style="width: 980px; max-width: 980px; margin: auto;"  class="class-content-records">
@@ -238,7 +251,7 @@ if (count($arrprodetail) > 0) {
 <?php 
 		if ($aAdminUser->isRoot() || ($authorUser->isEditProfile() && !$arrprodetail[0]->isDelete())) { 
 ?>
-<div class="reveal-modal-bg"></div>
+<div class="reveal-modal-bg1"></div>
 <div id="showlistbankdeletedlightbox">
 	<div class="reveal-modal-title"><h1>Cập Nhật Thông Tin Hồ Sơ</h1></div><br />
     <div class="reveal-modal-main">
@@ -313,16 +326,16 @@ $(document).on('click', '.close-reveal-modal', function(e) {
 		clostshowbankdeleted();
 	});
 	
-	$(document).on('click', '.reveal-modal-bg', function(e) {
+	$(document).on('click', '.reveal-modal-bg1', function(e) {
 		clostshowbankdeleted();
 	});
 	
 	function clostshowbankdeleted() {
-		$('.reveal-modal-bg').hide();
+		$('.reveal-modal-bg1').hide();
 		$('#showlistbankdeletedlightbox').hide();
 	}
 	$(document).on('click', '.class-edit-detail-profile-link', function(e) {
-		$('.reveal-modal-bg').show();
+		$('.reveal-modal-bg1').show();
 		$('#showlistbankdeletedlightbox').show();
 	});
 	$('.class-update-detail-profile-link').click(function(e) {
@@ -346,6 +359,11 @@ $(document).on('click', '.close-reveal-modal', function(e) {
 			return false;
 		}
 		
+		if (contentrequest == "") {
+			alert("Vui lòng nhập thông tin phản hồi");
+			return false;
+		}
+		
 		if(amount1 != "" && re_num.test(amount1)) {
 			alert("Vui lòng nhập số tiền vay và phải là số");
 			$('#form_amoun1').focus();
@@ -360,14 +378,12 @@ $(document).on('click', '.close-reveal-modal', function(e) {
 			return false;
 		}
 		
-		alert("sadsda");
 		$.ajax({
 			url: "/admin/control/ajax/AjaxUpdateProfileLoan.php",
 			type: "post",
 			data: {'act':'edit', 'rei': id, 'datecreate': dateCreate, 'name': namecus, 'phone': phonecus, 'stre': status, 'cont': contentrequest, 'quantityLoan': amount1, 'bankLoan': amount2, 'hoaHong': amount3},
 			dataType:"json",
 			success: function(response) {
-				alert(response);
 				if(response == true) {
 					alert("Cập Nhật Hồ Sơ Khách Hàng Thành Công");
 					location.reload();

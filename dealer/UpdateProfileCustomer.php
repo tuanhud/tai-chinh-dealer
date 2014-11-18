@@ -69,7 +69,7 @@ if(isset($_GET['id'])) {
 
 <div style="clear: both; height: 20px;"></div>
 <?php
-if (count($arrprodetail) > 0) {
+if (count($arrprodetail) > 1) {
 ?>
 <div style="margin:auto; width:980px; text-align: center;"><h2 style="color:#88A943; text-transform:uppercase; margin:auto;">Lịch Sử Giao Dịch</h2></div>
 <div style="width: 980px; max-width: 980px;"  class="class-content-records">
