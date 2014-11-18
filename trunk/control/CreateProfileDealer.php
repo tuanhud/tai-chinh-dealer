@@ -80,12 +80,12 @@ if(isset($_SESSION['taichinhondealer'])) {
 								break;
 							} else {
 								// đặt tên mới cho file hình up lên
-								$image_name=time().rand(10,99).'.'.$extension;
+								$image_name=time().rand(0,999).'.'.$extension;
 								// gán thêm cho file này đường dẫn
 								$newname="profilecutomer/".$image_name;
 								// kiểm tra xem file hình này đã upload lên trước đó chưa
 								$copied = copy($file_tmp, "../".$newname);
-								
+								echo($newname."<br>");
 								if (!$copied) {
 									//echo '<h1> File này đã tồn tại </h1>';
 									$errors=1;
@@ -137,7 +137,7 @@ if(isset($_SESSION['taichinhondealer'])) {
 								$fileProfile = new FileProfile();
 								$fileProfile->setLinkFile($link);
 								$fileProfile->setIdProfile($profile->getIDProfile());
-								$fileProfile->setDateCreated($profile->getDateCreate());
+								$fileProfile->setDateCreated($profile->getDateCreate().rand(10,99));
 								if ($fileProfileDAO->insertFileProfile($fileProfile)) {
 									
 								}
@@ -236,7 +236,7 @@ if(isset($_SESSION['taichinhondealer'])) {
 					
 					$profile->setInfoProfile(trim($_POST['form_infointro']));
 					$profile->setDateUpdate(time());
-					$profile->setDateCreate(time());
+					$profile->setDateCreate(time);
 					
 					$userManager = $authorLinkDealerDAO->getInfoUserManagerByDealer($emailacc);
 					if ($userManager == "") {
@@ -269,7 +269,7 @@ if(isset($_SESSION['taichinhondealer'])) {
 									$fileProfile = new FileProfile();
 									$fileProfile->setLinkFile($link);
 									$fileProfile->setIdProfile($profile->getIDProfile());
-									$fileProfile->setDateCreated($profile->getDateCreate());
+									$fileProfile->setDateCreated($profile->getDateCreate().rand(10,99));
 									if ($fileProfileDAO->insertFileProfile($fileProfile)) {
 										
 									}

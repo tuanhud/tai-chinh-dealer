@@ -14,6 +14,10 @@ class ConnectDB {
 	var $user = 'root';
 	var $pass = '';
 	
+	/*var $db = 'u868290459_deale';
+	var $user = 'u868290459_deale';
+	var $pass = ':cwx0$3Xifo3@P@~!f';*/
+	
 	public function __construct() {
         $this->con=@mysql_connect($this->server,$this->user,$this->pass) or die(mysql_error());
         $this->sdb=@mysql_select_db($this->db,$this->con) or die(mysql_error());
