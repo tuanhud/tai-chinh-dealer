@@ -10,6 +10,7 @@ RewriteEngine on
 
 RewriteBase /
 Options +FollowSymLinks
+RewriteRule ^admin/logout.html$ /LogoutAdmin.php [L]
 RewriteRule ^dang-ky-dai-ly.html$ /registryDaily.php [L]
 RewriteRule ^profile/ca-nhan.html /managerOfDaiLy.php?p=info-account [L]
 RewriteRule ^quanly/cap-nhat-ho-so/(.*)/(.*).html$ /managerOfDaiLy.php?p=profile-update&id=$1 [L]
