@@ -18,10 +18,10 @@ $host = "http://$host/";
 	background: #f6fcff;
 }
 </style>
-<link rel="stylesheet" type="text/css" href="<?php echo($host) ?>css/styledef.css"/>
-<link rel="stylesheet" type="text/css" href="<?php echo($host) ?>css/messi.css"/>
-<script type="text/javascript" src="<?php echo($host) ?>js/jquery-1.11.1.js"></script>
-<script type="text/javascript" src="<?php echo($host) ?>js/messi.js"></script>
+<link rel="stylesheet" type="text/css" href="/css/styledef.css"/>
+<link rel="stylesheet" type="text/css" href="/css/messi.css"/>
+<script type="text/javascript" src="/js/jquery-1.11.1.js"></script>
+<script type="text/javascript" src="/js/messi.js"></script>
 <script>
 $(document).ready(function(e) {
 	
