@@ -63,7 +63,7 @@ $(document).ready(function(e) {
 	
 		$.ajax({
 			type: "POST",
-			url: "<?php echo($host) ?>admin/control/ajax/AjaxLoginAdmin.php",
+			url: "/admin/control/ajax/AjaxLoginAdmin.php",
 			data:{emailre: email, passre: pass},
 			dataType: "json",
 			success: function(response){
@@ -71,7 +71,7 @@ $(document).ready(function(e) {
 					$(".fShowLoginSuccess").css("display", "block");
 					setTimeout(function(){
 						$(".fShowLoginSuccess").hide(1000);
-						window.location = "<?php echo($host) ?>/admin/";
+						window.location = "/admin/";
 					}, 3000);
 				} else if(response == "lock") { 
 					new Messi('Tài khoản của bạn đã bị khóa vui lòng liên hệ với chúng tôi để được kích hoạt lại!', {
@@ -120,7 +120,7 @@ $(document).ready(function(e) {
                         <td valign="middle">&nbsp;</td>
                     </tr>
                     <tr>
-                        <td height="74" valign="middle" align="center" background="<?php echo($host) ?>images/apl-tp.gif" style="background-repeat:no-repeat;"><h1>ĐĂNG NHẬP QUẢN TRỊ VIÊN</h1></td>
+                        <td height="74" valign="middle" align="center" background="/images/apl-tp.gif" style="background-repeat:no-repeat;"><h1>ĐĂNG NHẬP QUẢN TRỊ VIÊN</h1></td>
                     </tr>
                     <tr>
                         <td class="aplfrm"><table width="400" border="0" align="center" cellpadding="0" cellspacing="0">
@@ -144,7 +144,7 @@ $(document).ready(function(e) {
                         </table></td>
                     </tr>
                     <tr>
-                        <td width="458" height="26"><img src="<?php echo($host) ?>images/apl-bt.gif" width="458" height="26"></td>
+                        <td width="458" height="26"><img src="/images/apl-bt.gif" width="458" height="26"></td>
                     </tr>
                 </table>
             </form>   
